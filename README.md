@@ -1,3 +1,38 @@
+# Repositorio de Proyectos de Sistemas Expertos
+
+Bienvenido/a al repositorio oficial de **Proyectos de Sistemas Expertos**. Este espacio está dedicado a los proyectos desarrollados por los grupos de trabajo A, B, C, D, E y F. Cada grupo tiene asignada una carpeta específica para trabajar en su proyecto, con el objetivo de evitar conflictos entre equipos.
+
+---
+
+## 🚀 Objetivo
+
+Fomentar el aprendizaje, la creatividad y el desarrollo de habilidades prácticas en la implementación de sistemas expertos, proporcionando un entorno colaborativo para compartir y mejorar proyectos.
+
+---
+
+
+## 📂 Estructura del repositorio
+
+El repositorio está organizado en carpetas individuales para cada grupo. Cada equipo debe trabajar exclusivamente en su carpeta asignada:
+
+```
+/Proyectos-Sistemas-Expertos
+├── Algas/
+├── Corales/
+├── Cangrejos/
+```
+
+Dentro de cada carpeta, cada grupo puede organizar su proyecto de la siguiente manera:
+
+```
+/GrupoX
+├── README.md          # Descripción del proyecto
+├── src/               # Código fuente
+├── docs/              # Documentación adicional
+├── tests/             # Casos de prueba (opcional)
+└── assets/            # Recursos como imágenes o diagramas (opcional)
+```
+
 # Reglas de Uso del Repositorio
 
 Este repositorio está organizado en diferentes ramas para que cada grupo trabaje de manera independiente. A continuación, se detallan las reglas de uso:
