@@ -58,7 +58,7 @@ pip install tensorflow numpy
 ## Desarrolladores
 
 - Jesus Marichal (28.344.112)
-- Gabriel Rosas (27650586)
+- Gabriel Rosas (27.650.586)
 - German ()
 
 ---

@@ -23,11 +23,11 @@ def cargar_datos_csv(nombre_archivo):
 datos = cargar_datos_csv("crustaceos_entrenamiento.csv")
 #print(datos)
 
-# Paso 2: Separar características (X) y etiquetas (y)
+# Separar características (X) y etiquetas (y)
 X = datos.drop('especie', axis=1).values
 y = datos['especie'].values
 
-# Paso 3: Codificar etiquetas a números + one-hot
+# Codificar etiquetas a números + one-hot
 from sklearn.preprocessing import LabelEncoder
 from keras.utils import to_categorical
 
@@ -35,12 +35,12 @@ encoder = LabelEncoder()
 y_numerico = encoder.fit_transform(y)
 y_categ = to_categorical(y_numerico)
 
-# Paso 4: Dividir en entrenamiento y validación
+# Dividir en entrenamiento y validación
 from sklearn.model_selection import train_test_split
 
 X_train, X_val, y_train, y_val = train_test_split(X, y_categ, test_size=0.25, random_state=42)
 
-# Paso 5: Construcción del modelo MLP
+# Construcción del modelo MLP
 from keras.models import Sequential
 from keras.layers import Dense
 
@@ -52,10 +52,10 @@ modelo = Sequential([
 
 modelo.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Paso 6: Entrenar
+# Entrenar
 modelo.fit(X_train, y_train, epochs=100, batch_size=4, validation_data=(X_val, y_val))
 
-# Paso 7: Guardar el modelo entrenado y las clases
+# Guardar el modelo entrenado y las clases
 modelo.save("Cangrejos/src/modelo_crustaceos.h5")
 import numpy as np
 np.save("Cangrejos/src/clases.npy", encoder.classes_)
