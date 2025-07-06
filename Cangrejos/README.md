@@ -53,12 +53,14 @@ Instalación rápida:
 ```bash(consola)
 pip install tensorflow numpy
 
+Nota: Si tiene algun problema con pip usar: python -m pip install (Libreria)
+
 ---
 
 ## Desarrolladores
 
 - Jesus Marichal (28.344.112)
 - Gabriel Rosas (27.650.586)
-- German ()
+- German (30.707.833)
 
 ---
