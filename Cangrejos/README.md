@@ -1,5 +1,5 @@
 ### 🦀 Clasificador de Especies de Crustáceos
-    Este proyecto presenta un sistema experto innovador con una red neuronal integrada diseñado para identificar especies de crustáceos basándose en sus características físicas y ecológicas. La aplicación cuenta con una interfaz gráfica de usuario (GUI) intuitiva desarrollada con Tkinter y utiliza TensorFlow para potentes capacidades de predicción.
+Este proyecto presenta un sistema experto innovador con una red neuronal integrada diseñado para identificar especies de crustáceos basándose en sus características físicas y ecológicas. La aplicación cuenta con una interfaz gráfica de usuario (GUI) intuitiva desarrollada con Tkinter y utiliza TensorFlow para potentes capacidades de predicción.
 
 ### 💡 ¿Cómo Funciona?
     El clasificador guía al usuario a través de un proceso interactivo para determinar la especie de crustáceo.
@@ -77,11 +77,11 @@
     python -m pip install tensorflow numpy
 
 ### 👨‍💻 Desarrolladores
-    Este proyecto fue desarrollado por:
+Este proyecto fue desarrollado por:
 
-    Jesus Marichal (C.I.: 28.344.112)
+Jesus Marichal (C.I.: 28.344.112)
 
-    Gabriel Rosas (C.I.: 27.650.586)
+Gabriel Rosas (C.I.: 27.650.586)
 
-    German (C.I.: 30.707.833)
+German (C.I.: 30.707.833)
 
