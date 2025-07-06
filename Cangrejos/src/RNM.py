@@ -52,16 +52,12 @@ modelo = Sequential([
 
 modelo.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Entrenar
-modelo.fit(X_train, y_train, epochs=100, batch_size=4, validation_data=(X_val, y_val))
+# Entrenar en 125 epocas, apartir de la 100 dejaba de aprender 
+modelo.fit(X_train, y_train, epochs=125, batch_size=4, validation_data=(X_val, y_val))
 
-# Guardar el modelo entrenado y las clases
+# Guarda el modelo entrenado y las clases
 modelo.save("Cangrejos/src/modelo_crustaceos.h5")
 import numpy as np
 np.save("Cangrejos/src/clases.npy", encoder.classes_)
 
 print("Entrenamiento finalizado y modelo guardado con éxito.")
-
-
-
-

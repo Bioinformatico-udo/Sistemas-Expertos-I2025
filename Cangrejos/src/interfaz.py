@@ -16,26 +16,31 @@ clases = np.load(clases_path, allow_pickle=True)
 
 # Preguntas
 preguntas = [
-    "¿Vive en agua dulce?",
-    "¿Vive en agua salada?",
-    "¿Tiene caparazón plano?",
-    "¿Tiene caparazón redondo?",
-    "¿Su color es rojo?",
-    "¿Su color es verde?",
-    "¿Su color es marrón?",
-    "¿Su cuerpo es transparente?",
-    "¿Tiene pinzas grandes?",
-    "¿Tiene pinzas pequeñas?",
-    "¿Tiene patas nadadoras?",
-    "¿Tiene patas caminadoras?",
-    "¿Tiene ojos saltones?",
-    "¿Tiene ojos ocultos?",
-    "¿Posee espinas visibles?",
-    "¿No posee espinas?",
-    "¿Sus antenas son cortas?",
-    "¿Sus antenas son largas?",
-    "¿Es de tamaño pequeño?"
+    "¿Vive en agua dulce?",                        # agua_dulce
+    "¿Vive en agua salada?",                       # agua_salada
+    "¿Es de tamaño pequeño? (2.0 cm a 3.0 cm)",    # pequeño
+    "¿Es de tamaño mediano? (3.1 cm a 4.0 cm)",    # mediano
+    "¿Es de tamaño grande? (más de 4.0 cm)",       # grande
+    "¿Tiene caparazón redondo?",                   # caparazon_redondo
+    "¿Tiene caparazón ovalado?",                   # caparazon_ovalado
+    "¿Tiene caparazón alargado?",                  # caparazon_alargado
+    "¿Su color es rojo?",                          # rojo
+    "¿Su color es verde?",                         # verde
+    "¿Su color es marrón?",                        # marron
+    "¿Su cuerpo es transparente?",                 # transparente
+    "¿Tiene pinzas grandes?",                      # pinzas_grandes
+    "¿Tiene pinzas pequeñas?",                     # pinzas_pequeñas
+    "¿Tiene patas nadadoras?",                     # patas_nadadoras
+    "¿Tiene patas caminadoras?",                   # patas_caminadoras
+    "¿Sus antenas son cortas?",                    # antenas_cortas
+    "¿Sus antenas son largas?",                    # antenas_largas
+    "¿Habita en zonas rocosas?",                   # habitat_rocoso
+    "¿Habita en zonas de arena?",                  # habitat_arena
+    "¿Vive en zonas de corrientes fuertes?",       # corrientes_fuertes
+    "¿Vive en zonas de corrientes suaves?",        # corrientes_suaves
+    "¿Está ovígera (con huevos)?"                 # ovigera
 ]
+
 
 respuesta_vector = []
 indice_pregunta = 0
@@ -83,6 +88,10 @@ def confirmar_inicio_cuestionario():
     btn_si.config(command=lambda: registrar_respuesta(1))
     btn_no.config(command=lambda: registrar_respuesta(0))
     btn_salir_cuestionario.pack(pady=20)
+    messagebox.showinfo(
+        "ALERTA",
+        "Por favor, responda correctamente a las preguntas que se van a mostrar."
+    )
     mostrar_pregunta()
 
 def mostrar_pregunta():
