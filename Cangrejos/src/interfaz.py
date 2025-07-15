@@ -1,9 +1,10 @@
 import os
 import numpy as np
 import tensorflow as tf
-import tkinter as tk
+from tkinter import *
 from tkinter import messagebox
 import webbrowser
+from PIL import Image, ImageTk
 
 
 # Cargar modelo y clases desde la misma carpeta
@@ -14,158 +15,562 @@ clases_path = os.path.join(base_dir, "clases.npy")
 modelo = tf.keras.models.load_model(modelo_path)
 clases = np.load(clases_path, allow_pickle=True)
 
+#imagenes
+lista_imagenes={
+    "Agua Salada":"../assets/agua_salada.png",
+    "Agua Dulce":"../assets/agua_dulce.png",
+    "Tamaño pequeño (2.0cm a 3.0cm)":"../assets/cangrejo_pequeno.png",
+    "Tamaño mediano (3.1cm a 4.0cm)":"../assets/cangrejo_mediano.png",
+    "Tamaño grande (mas de 4.0cm)":"../assets/cangrejo_grande.png",
+    "Caparazon Redondo":"../assets/caparazon_redondo.png",
+    "Caparazon Ovalado":"../assets/caparazon_ovalado.png",
+    "Caparazon Alargado":"../assets/caparazon_alargado.png",
+    "Color Rojo":"../assets/cangrejo_rojo.png",
+    "Color Verde":"../assets/cangrejo_verde.png",
+    "Color Marron":"../assets/cangrejo_marron.png",
+    "Si":"../assets/cangrejo_transparente.png",
+    "No":"../assets/cangrejo_no_transparente.png",
+    "Pinzas Grandes":"../assets/cangrejo_pinzas_grandes.png",
+    "Pinzas Pequeñas":"../assets/cangrejo_pinzas_pequenas.png",
+    "Patas nadadoras":"../assets/patas_caminadoras.png",
+    "Patas caminadoras":"../assets/patas_nadadoras.png",
+    "Antenas Cortas":"../assets/antenas_cortas.png",
+    "Antenas Largas":"../assets/antenas_largas.png",
+    "Habitat de zona Rocosas":"../assets/playa_rocosa.png",
+    "Habitat de zona Arenosa":"../assets/playa_arenosa.png",
+    "Zona de corrientes Fuertes":"../assets/corrientes_fuertes.png",
+    "Zona de corriente Suaves":"../assets/corrientes_suaves.png",
+    "Con huevos":"../assets/con_huevos.png",
+    "Sin huevos":"../assets/sin_huevos.png",
+}
 # Preguntas
-preguntas = [
-    "¿Vive en agua dulce?",                        # agua_dulce
-    "¿Vive en agua salada?",                       # agua_salada
-    "¿Es de tamaño pequeño? (2.0 cm a 3.0 cm)",    # pequeño
-    "¿Es de tamaño mediano? (3.1 cm a 4.0 cm)",    # mediano
-    "¿Es de tamaño grande? (más de 4.0 cm)",       # grande
-    "¿Tiene caparazón redondo?",                   # caparazon_redondo
-    "¿Tiene caparazón ovalado?",                   # caparazon_ovalado
-    "¿Tiene caparazón alargado?",                  # caparazon_alargado
-    "¿Su color es rojo?",                          # rojo
-    "¿Su color es verde?",                         # verde
-    "¿Su color es marrón?",                        # marron
-    "¿Su cuerpo es transparente?",                 # transparente
-    "¿Tiene pinzas grandes?",                      # pinzas_grandes
-    "¿Tiene pinzas pequeñas?",                     # pinzas_pequeñas
-    "¿Tiene patas nadadoras?",                     # patas_nadadoras
-    "¿Tiene patas caminadoras?",                   # patas_caminadoras
-    "¿Sus antenas son cortas?",                    # antenas_cortas
-    "¿Sus antenas son largas?",                    # antenas_largas
-    "¿Habita en zonas rocosas?",                   # habitat_rocoso
-    "¿Habita en zonas de arena?",                  # habitat_arena
-    "¿Vive en zonas de corrientes fuertes?",       # corrientes_fuertes
-    "¿Vive en zonas de corrientes suaves?",        # corrientes_suaves
-    "¿Está ovígera (con huevos)?"                 # ovigera
+matriz_pregunta=[
+    ["¿En que tipo de Agua vive? ",
+        "Agua Salada",
+        "Agua Dulce"],
+    ["¿Cual es su tamaño? ",
+        "Tamaño pequeño (2.0cm a 3.0cm)",
+        "Tamaño mediano (3.1cm a 4.0cm)",
+        "Tamaño grande (mas de 4.0cm)"],
+    ["¿Como es su caparazon? ",
+        "Caparazon Redondo",
+        "Caparazon Ovalado",
+        "Caparazon Alargado"],
+    ["¿De que color es?",
+        "Color Rojo",
+        "Color Verde",
+        "Color Marron"],
+    ["¿Su cuerpo es transparente? ",
+        "Si",
+        "No"],
+    ["¿Como son sus pinzas?",
+        "Pinzas Grandes",
+        "Pinzas Pequeñas"],
+    ["¿Como son sus patas? ",
+        "Patas nadadoras",
+        "Patas caminadoras"],
+    ["¿De que tamaño son sus antenas? ",
+        "Antenas Cortas",
+        "Antenas Largas"],
+    ["¿En que tipo de habitat se encuentra? ",
+        "Habitat de zona Rocosas",
+        "Habitat de zona Arenosa"],
+    ["¿Como son las corrientes de agua de donde se encuentra?",
+        "Zona de corrientes Fuertes",
+        "Zona de corriente Suaves"],
+    ["¿Esta ovigera(Con huevos)?",
+        "Con huevos",
+        "Sin huevos"]
 ]
+#caracteristicas de petrolisthes
+lista_cangrejos={
+    "Petrolisthes_Tridentatus":{
+        "property1":"* Caparazón subcuadrado(ligeramente más largo que ancho) con gránulos bajos y pliegues posterolaterals",
+        "property2":"* Región frontal tridentada (lóbulo medio triangular, al menos 2 veces más ancho que los laterales)",
+        "property3":"* Artejo basal de la anténula con cresta transversal aserrada en la superficie expuesta",
+        "property4":"* Tercer maxilípedo con surco longitudinal submarginal en el isquio",
+        "imagen":"../assets/tridentatus.png"
+    },
+    "Petrolisthes_Tonsorius":{
+        "property1":"* Caparazón subcuadrado (tan largo como ancho) casi liso, con pliegues cortos en la región posterolateral",
+        "property2":"* Región frontal con surco medio profundo que se extiende hasta los lóbulos protogástricos",
+        "property3":"* Flagelo de las antenas más largo que el caparazón, con setas escasas proximalmente",
+        "property4":"* Carpo de los quelípedos con gránulos diagonales en el margen extensor",
+        "imagen":"../assets/tonsorius.png"
+    },
+    "Petrolisthes_Jugosus":{
+        "property1":"* Caparazón subcircular (más ancho que largo en hembras, más largo en machos)",
+        "property2":"* Telson con 5 placas (vs. 7 en otras especies)",
+        "property3":"* Región frontal trilobulada con surco medio profundo",
+        "property4":"* Carpo de los quelípedos con margen extensor aserrado (gránulos en forma de espínulas)",
+        "imagen":"../assets/jugosus.png"
+    },
+    "Petrolisthes_Puelitus":{
+        "property1":"* Caparazón subcircular con gránulos pequeños y surcos transversales",
+        "property2":"* Flagelo de las antenas desarmado (sin setas) y más largo que el caparazón",
+        "property3":"* Propodio de las patas caminadoras con 4 espinas móviles en el margen flexor (vs. 5 en otras especies)",
+        "property4":"* Tercer maxilípedo con surco longitudinal en el isquio y 4 surcos en el carpo",
+        "imagen":"../assets/puelithus.png"
+    },
+    "Petrolisthes_Lewesi":{
+        "property1":"* Caparazón subcuadrado con superficie irregular y pliegues dorsolaterales",
+        "property2":"* Carpo de los quelípedos con 2–4 dientes triangulares en el margen flexor",
+        "property3":"* Primer par de patas caminadoras con 5 espinas en el propodio; otros pares con 4",
+        "property4":"* Región frontal ligeramente pubescente (setas aisladas)",
+        "imagen":"../assets/lewisi.png"
+    },
+    "Petrolisthes_Armatus":{
+        "property1":"* Caparazón ligeramente más largo que ancho, con pliegues posterolaterales",
+        "property2":"* Espina epibranquial presente (ausente en otras especies)",
+        "property3":"* Carpo de los quelípedos con 3 dientes en el margen flexor y gránulos en el extensor",
+        "property4":"* Mero de las patas caminadoras con 2–6 espinas en el margen extensor (vs. 0–4 en otras)",
+        "imagen":"../assets/armathus.png"
+    },
+    "Petrolisthes_Gallatinus":{
+        "property1":"* Caparazón más largo que ancho, con pliegues transversales setosos",
+        "property2":"* Región frontal con depresión media en la superficie dorsal",
+        "property3":"* Espina supraorbital presente (ausente en otras especies)",
+        "property4":"* Mero de los quelípedos con estrías transversales setosas",
+        "imagen":"../assets/galathinus.png"
+    },
+    "Petrolisthes_Marginatus":{
+        "property1":"* Caparazón casi liso (sin gránulos pronunciados), con surcos poco profundos",
+        "property2":"* Espina exorbital presente (formando un ángulo orbital externo aserrado)",
+        "property3":"* Carpo de los quelípedos con tubérculos espiniformes en el margen extensor",
+        "property4":"* Tercer maxilípedo con estrías y gránulos en isquio, mero, carpo y propodio",
+        "imagen":"../assets/marginatus.png"
+    },
+}
 
-
+#pregunta=list(pregunta)
 respuesta_vector = []
-indice_pregunta = 0
+indice_pregunta = 0 #Llevar el contrl de las preguntas
+max_preguntas= 10 #Maximo de preguntas
+min_preguntas= 0 #Minimo de pregunta
 
-ventana = tk.Tk()
-ventana.title("Clasificación de Especies")
-ventana.geometry("520x500")
+#ventana principal
+ventana = Tk()
+ventana.title("Crustaceos Expertos")
+ventana.geometry("800x600")
 ventana.configure(bg="#dbe4f0")
 ventana.resizable(False, False)
+#panel donde se va a poner los botones y textos
+panel_principal=Frame(ventana,width=200,height=600, bg="white")
+panel_principal.pack(fill=BOTH, expand=True)
+
+#Control de los radio button
+opcion_elegida=StringVar()
+opcion_elegida.set("opcion1")
 
 # ================= FUNCIONES =================
 
+#GabrielRosas
 def regresar_menu():
-    titulo.pack(pady=20)
-    texto.pack_forget()
-    contenedor_botones.pack_forget()
-    btn_salir_cuestionario.pack_forget()
-    boton_predecir.pack_forget()
-    for b in botones_inicio:
-        b.pack(pady=5)
+   limpiar_panel_principal()
+   global indice_pregunta
+   indice_pregunta=0
+   mostrar_panel_principal()
 
-def iniciar_confirmacion():
-    titulo.pack_forget()
-    for b in botones_inicio:
-        b.pack_forget()
-    btn_salir_cuestionario.pack_forget()
-    contenedor_botones.pack_forget()
-    texto.pack_forget()
-    boton_predecir.pack_forget()
-
-    texto.config(
-        text="A continuación se le hará un cuestionario para poder identificar la especie.\n¿Desea continuar?",
-        font=("Segoe UI", 12),
-        justify="center"
-    )
-    texto.pack(pady=150, anchor="center")
-    contenedor_botones.pack()
-    btn_si.config(command=confirmar_inicio_cuestionario)
-    btn_no.config(command=regresar_menu)
-
-def confirmar_inicio_cuestionario():
-    global respuesta_vector, indice_pregunta
-    respuesta_vector = []
-    indice_pregunta = 0
-    btn_si.config(command=lambda: registrar_respuesta(1))
-    btn_no.config(command=lambda: registrar_respuesta(0))
-    btn_salir_cuestionario.pack(pady=20)
-    messagebox.showinfo(
-        "ALERTA",
-        "Por favor, responda correctamente a las preguntas que se van a mostrar."
-    )
-    mostrar_pregunta()
-
-def mostrar_pregunta():
-    if indice_pregunta >= len(preguntas):
-        mostrar_resultado()
-        return
-    texto.config(
-        text=preguntas[indice_pregunta],
-        font=("Segoe UI", 13),
-        justify="center"
-    )
-    texto.pack(pady=125)
-    contenedor_botones.pack()
-
-def registrar_respuesta(valor):
+#GabrielRosas
+def registrar_respuesta():
     global indice_pregunta
-    respuesta_vector.append(valor)
-    indice_pregunta += 1
-    mostrar_pregunta()
+    if indice_pregunta==0:# ¿En que tipo de Agua vive?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==1:#  ¿Cual es su tamaño?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion3":
+            respuesta_vector.append(0)
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==2:#  ¿Como es su caparazon?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion3":
+            respuesta_vector.append(0)
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==3:# ¿De que color es?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion3":
+            respuesta_vector.append(0)
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==4:# ¿Su cuerpo es transparente?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==5:# ¿Como son sus pinzas?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==6:# ¿Como son sus patas?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==7:# ¿De que tamaño son sus antenas?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==8:# ¿En que tipo de habitat se encuentra?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==9:# ¿Como son las corrientes de agua de donde se encuentra?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
+    elif indice_pregunta==10:# ¿Esta ovigera(Con huevos)?
+        if opcion_elegida.get()=="opcion1":
+            respuesta_vector.append(1)
+            respuesta_vector.append(0)
+            print("Se guardo la:", opcion_elegida.get())
+        elif opcion_elegida.get()=="opcion2":
+            respuesta_vector.append(0)
+            respuesta_vector.append(1)
+            print("Se guardo la:", opcion_elegida.get())
 
+def inicializar_valores():
+    global respuesta_vector
+    global indice_pregunta
+    global opcion_elegida
+    respuesta_vector=[]
+    indice_pregunta=0
+    opcion_elegida.set("opcion0")
+
+#GabrielRosas
 def mostrar_resultado():
-    contenedor_botones.pack_forget()
-    texto.config(text="Cuestionario completado.\nPresione 'Predecir' para obtener la especie.",
-                 font=("Segoe UI", 13), justify="center")
-    texto.pack(pady=80)
-    boton_predecir.pack(pady=10)
-    btn_salir_cuestionario.pack(pady=10)
+    limpiar_panel_principal()
+    print("Mostrar Resultado")
 
-def predecir_especie():
-    entrada = np.array([respuesta_vector])
-    prediccion = modelo.predict(entrada)
-    especie = clases[np.argmax(prediccion)]
-    texto.config(text=f"Especie predicha: {especie}")
-    boton_predecir.pack_forget()
+    def predecir_especie():
+        print("Respuesta evaluada: ",len(respuesta_vector))
+        entrada = np.array([respuesta_vector])
+        prediccion = modelo.predict(entrada)
+        especie = clases[np.argmax(prediccion)]
+        print(especie)
+        nombre_especie.config(text=especie)
+        for i in range(1,5):
+            propiedad="property"+str(i)
+            description=Label(panel_descripcion,text=lista_cangrejos[especie][propiedad], bg="white", font=("Arial",10,"bold"))
+            description.pack(padx=0,pady=0, fill=BOTH)
+        imagen=PhotoImage(file=lista_cangrejos[especie]["imagen"])
+        imagen_reduccion=imagen.subsample(10,10)
+        presentar_image=Label(panel_representacion, image=imagen_reduccion)
+        presentar_image.pack(padx=0,pady=5)
+        presentar_image.image=imagen_reduccion
 
-def salir():
+    panel=Frame(panel_principal,width=800,height=400, bg="#6495ED")
+    panel.pack(padx=0,pady=0,fill=BOTH,expand=True)
+
+    titulo=Label(panel, text="Resultados sugerido", bg="#6495ED", font=("Arial",18,"bold"))
+    titulo.pack(pady=5)
+    boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
+    boton_salir.pack(padx=10, pady=10, side=BOTTOM)
+    boton_nueva_identificacion=Button(panel, text="Nueva Identificacion", command=mostrar_ascendente, bg="#228B22", font=("Arial",12,"bold"))
+    boton_nueva_identificacion.pack(padx=10, pady=10, side=BOTTOM)
+    #Panel para mostrar los datos del cangrejo
+    panel_resultado=Frame(panel,width=600, height=400, bg="white")
+    panel_resultado.pack(padx=50,pady=10,fill=BOTH,expand=True)
+    titulo_panel_descripcion=Label(panel_resultado,width=40, text="Informacion", font=("Arial",15,"bold"))
+    titulo_panel_descripcion.pack()
+    titulo_nombre_especie=Label(panel_resultado,width=40, text="Nombre Especie", font=("Arial",12,"bold"))
+    titulo_nombre_especie.pack(pady=5, expand=False)
+    nombre_especie=Label(panel_resultado,width=40, text="", bg="white", font=("Arial",15,"bold"))
+    nombre_especie.pack(pady=5, expand=False)
+    titulo_despcripcion_especie=Label(panel_resultado,width=40, text="Description", font=("Arial",12,"bold"))
+    titulo_despcripcion_especie.pack(pady=5, expand=False)
+    panel_descripcion=Frame(panel_resultado)
+    panel_descripcion.pack()
+    titulo_representacion=Label(panel_resultado,width=40, text="Representacion visual", font=("Arial",12,"bold"))
+    titulo_representacion.pack(pady=5, expand=False)
+    panel_representacion=Frame(panel_resultado)
+    panel_representacion.pack()
+    predecir_especie()
+
+#JesusMarichal
+def salir_programa():
     ventana.destroy()
 
-def mostrar_acerca_de():
+#JesusMarichal
+def mostrar_paginaweb():
     webbrowser.open("https://github.com/Bioinformatico-udo/Sistemas-Expertos-I2025/tree/main")
 
-# ================ UI ==================
+def mostrar_paginaweb_udone():
+    webbrowser.open("https://es.wikipedia.org/wiki/Universidad_de_Oriente_N%C3%BAcleo_de_Nueva_Esparta")
 
-titulo = tk.Label(ventana, text="Clasificador de Especies",
-                  font=("Segoe UI", 14, "bold"), bg="#dbe4f0", fg="#000000")
-titulo.pack(pady=20)
+#GabrielRosas
+def limpiar_panel_principal():
+    for widget in panel_principal.winfo_children():
+        widget.destroy()
 
-botones_inicio = [
-    tk.Button(ventana, text="Ascendente", bg="#6c757d", fg="white", font=("Segoe UI", 11),
-              width=20, pady=8, command=iniciar_confirmacion),
-    tk.Button(ventana, text="Decreciente", bg="#6c757d", fg="white", font=("Segoe UI", 11),
-              width=20, pady=8, command=lambda: print("Orden descendente")),
-    tk.Button(ventana, text="Acerca De", bg="#3b9c9c", fg="white", font=("Segoe UI", 11),
-              width=20, pady=8, command=mostrar_acerca_de),
-    tk.Button(ventana, text="Salir", bg="#c0392b", fg="white", font=("Segoe UI", 11),
-              width=20, pady=8, command=salir)
-]
+#GabrielRosas
+def mostrar_ascendente():
+    limpiar_panel_principal()
+    print("Panel ascendente")
+    print("Respuesta listas:",len(respuesta_vector))
+    inicializar_valores()
+    print("Respuesta listas:",len(respuesta_vector))
+    print("posicion del indice_pregunta:",indice_pregunta)
+    print("posicion del indice_pregunta:",indice_pregunta)
+    def pregunta_siguiente():
+        global indice_pregunta
+        if opcion_elegida.get()!="opcion0":
+            if indice_pregunta+1 >= min_preguntas and indice_pregunta+1 <= max_preguntas:
+                registrar_respuesta()
+                indice_pregunta+=1
+                mostrar_pregunta_respuestas()
+                preguntas_completas="Pregunta Completadas:",indice_pregunta,"/",max_preguntas
+                cantidad_preguntas.config(
+                    text=preguntas_completas
+                )
+                opcion_elegida.set("opcion0")
+            else:
+                mostrar_resultado()
+        else:
+            messagebox.showwarning("Advertencia","Por favor selecciona una opcion antes de avanzar")
 
-for b in botones_inicio:
-    b.pack(pady=5)
+    def pregunta_anterior():
+        global indice_pregunta
+        if indice_pregunta-1 >= min_preguntas and indice_pregunta-1 <= max_preguntas:
+            indice_pregunta-=1
+            mostrar_pregunta_respuestas()
+            preguntas_completas="Pregunta Completadas:",indice_pregunta,"/",max_preguntas
+            cantidad_preguntas.config(
+                text=preguntas_completas
+            )
+            opcion_elegida.set("opcion0")
+        else:
+            print("No puedo retroceder mas")
+            messagebox.showwarning("Advertencia","Se encuentra en la primera pregunta, no puede retroceder mas")
 
-texto = tk.Label(ventana, text="", font=("Segoe UI", 12),
-                 wraplength=440, bg="#dbe4f0", justify="center")
+    def limpiar_panel_respuestas():
+        for widget in panel_respuestas.winfo_children():
+            widget.destroy()
 
-contenedor_botones = tk.Frame(ventana, bg="#dbe4f0")
-btn_si = tk.Button(contenedor_botones, text="SI", bg="#3498db", fg="white", width=10, font=("Segoe UI", 11))
-btn_no = tk.Button(contenedor_botones, text="NO", bg="#e74c3c", fg="white", width=10, font=("Segoe UI", 11))
-btn_si.pack(side="left", padx=10, pady=5)
-btn_no.pack(side="right", padx=10, pady=5)
+    def mostrar_pregunta_respuestas():
+        limpiar_panel_respuestas()
+        global indice_pregunta
+        indice_fila=0
+        if indice_pregunta>=min_preguntas and indice_pregunta<= max_preguntas:
+            fila=matriz_pregunta[indice_pregunta]
+            for columna in fila:
+                if indice_fila==0:
+                    print("-"*30)
+                    print("Pregunta: ",columna,"# ",indice_pregunta)
+                    titulo_preguntas.config(text=columna)
+                else:
+                    opcion="opcion"+ str(indice_fila)
+                    print(indice_fila,": ",columna)
+                    imagen_respuestas=PhotoImage(file=lista_imagenes[columna])
+                    imagen_reduccion_respuesta=imagen_respuestas.subsample(10,10)#10 se muestra mejor
+                    respuesta=Radiobutton(panel_respuestas, width=200, height=300,text=columna, variable=opcion_elegida, value=opcion, image=imagen_reduccion_respuesta, compound="top", relief="solid", borderwidth=1, font=("Arial",10,"bold"))
+                    respuesta.pack(padx=10, pady=50, side=LEFT, fill=BOTH, expand=True)
+                    respuesta.image=imagen_reduccion_respuesta
+                indice_fila+=1
+            print("-"*30)
 
-btn_salir_cuestionario = tk.Button(ventana, text="Salir al menú", bg="#a93226", fg="white",
-                                   font=("Segoe UI", 11), width=20, pady=6, command=regresar_menu)
+    panel=Frame(panel_principal,width=800,height=600, bg="#6495ED")
+    panel.pack(padx=0,pady=0,fill=BOTH,expand=True)
 
-boton_predecir = tk.Button(ventana, text="Predecir", bg="#2e86c1", fg="white",
-                           font=("Segoe UI", 11), width=20, pady=6, command=predecir_especie)
+    titulo=Label(panel, text="Identificacion de Especies", font=("Arial",18,"bold"))
+    titulo.pack(padx=0, pady=5)
+    preguntas_completas="Pregunta Completadas:",indice_pregunta,"/",max_preguntas,
+    cantidad_preguntas=Label(panel, text=preguntas_completas, font=("Arial",12,"bold"))
+    cantidad_preguntas.pack(padx=0, pady=5)
 
+    panel_preguntas=Frame(panel, bg="#E6E6FA",width=600,height=400)
+    panel_preguntas.pack(padx=10, pady=5,fill=BOTH,expand=True)
+    titulo_preguntas=Label(panel_preguntas,text="", font=("Arial",12,"bold"))
+    titulo_preguntas.pack()
+
+    panel_respuestas=Frame(panel_preguntas, bg="#FFE4C4", width=300,height=300)
+    panel_respuestas.pack(side=TOP,fill=BOTH, expand=True)
+    mostrar_pregunta_respuestas()
+
+    panel_botones=Frame(panel_preguntas, bg="#FFE4C4", width=600,height=50)
+    panel_botones.pack(side=BOTTOM, padx=0, pady=0, fill=X, expand=False)
+    boton_anterior=Button(panel_botones, text="Anterior", command=pregunta_anterior, bg="#F0E68C", font=("Arial",12,"bold"))
+    boton_anterior.pack(padx=50, pady=2, side=LEFT,fill=BOTH,expand=True)
+    boton_siguiente=Button(panel_botones, text="Siguiente", command=pregunta_siguiente, bg="#228B22", font=("Arial",12,"bold"))
+    boton_siguiente.pack(padx=50, pady=2, side=RIGHT,fill=BOTH,expand=True)
+
+    boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
+    boton_salir.pack(padx=100, pady=10)
+
+#GabrielRosas
+def mostrar_descendente():
+
+    def limpiar_panel_mostrar_resultado():
+        for widget in panel_mostrar_resultado.winfo_children():
+            widget.destroy()
+
+    def mostrar_datos(nombre):
+        for i in range(1,5):
+            propiedad="property"+str(i)
+            print(nombre)
+            print(lista_cangrejos[nombre][propiedad])
+            resultado=Label(panel_mostrar_resultado,text=lista_cangrejos[nombre][propiedad], bg="white", font=("Arial",10,"bold"))
+            resultado.pack(padx=0,pady=0,fill=BOTH, expand=True)
+        imagen=PhotoImage(file=lista_cangrejos[nombre]["imagen"])
+        imagen_reduccion=imagen.subsample(10,10)
+        presentar_image=Label(panel_mostrar_resultado, image=imagen_reduccion)
+        presentar_image.pack(padx=0,pady=5)
+        presentar_image.image=imagen_reduccion
+
+    def buscar_especie():
+        encontrado=""
+        limpiar_panel_mostrar_resultado()
+        if entrada_busqueda.get()!="":
+            print("Buscando...")
+            for cangrejo in lista_cangrejos:
+                if entrada_busqueda.get().lower() != cangrejo.lower():
+                    print("No hay similar")
+                else:
+                    print("Se encontro algo")
+                    encontrado=cangrejo
+            if encontrado!="":
+                mostrar_datos(encontrado)
+            else:
+                print("no hubo considencias")
+                sin_resultado=Label(panel_mostrar_resultado,text="No hubo considencia, intente a volver a escribir el nombre", bg="#FFA500", font=("Arial",15,"bold"))
+                sin_resultado.pack(padx=0,pady=0,fill=NONE, expand=True)
+        else:
+            messagebox.showwarning("Advertencia","Debe llenar el campo para poder realizar la busqueda")
+
+    print("Panel descendente")
+    limpiar_panel_principal()
+    panel=Frame(panel_principal,width=800,height=600, bg="#6495ED")
+    panel.pack(padx=0, pady=0, fill=BOTH, expand=True)
+
+    titulo=Label(panel, text="Verificar una Especie:", bg="#6495ED",font=("Arial",18,"bold"))
+    titulo.pack(padx=5, pady=5)
+
+    panel_verificacion=Frame(panel,bg="white", width=600, height=400)
+    panel_verificacion.pack(padx=50,pady=10,fill=BOTH, expand=True)
+
+    panel_busqueda=Frame(panel_verificacion, bg="white",width=600,height=100)
+    panel_busqueda.pack(padx=0,pady=10, fill=NONE, expand=False)
+    titulo_busqueda=Label(panel_busqueda, text="Seccion para identificar una especie segun su nombre:", font=("Arial",12,"bold"))
+    titulo_busqueda.grid(row=0, columnspan=3,padx=2,pady=2)
+    nombre_especie=Label(panel_busqueda,text="Nombre: ", width=10, font=("Arial",12,"bold"))
+    nombre_especie.grid(row=2 ,column=0, padx=5, pady=5,)
+    entrada_busqueda=Entry(panel_busqueda, width=20 , font=("Arial",15,"bold"))
+    entrada_busqueda.grid(row=2 ,column=1, padx=5, pady=5)
+    boton_buscar=Button(panel_busqueda, text="Buscar", width=10, bg="#6495ED", command=buscar_especie, font=("Arial",12,"bold"))
+    boton_buscar.grid(row=2 ,column=2, padx=5, pady=5)
+
+    panel_resultado=Frame(panel_verificacion, bg="white",width=600,height=300)
+    panel_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
+    titulo_resultado=Label(panel_resultado,text="Resultados de la especie identificada:", font=("Arial",12,"bold"))
+    titulo_resultado.pack(padx=0, pady=5, fill=NONE,expand=False)
+    panel_mostrar_resultado=Frame(panel_resultado, bg="white")
+    panel_mostrar_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
+
+    boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
+    boton_salir.pack(padx=100, pady=10)
+
+#GabrielRosas
+def mostrar_panel_principal():
+    panel_menu=Frame(panel_principal,width=200,height=600, bg="#B0C4DE")
+    panel_menu.pack(side=LEFT,fill=Y, expand=True)
+
+    panel_fondo=Frame(panel_principal,width=600,height=600)
+    panel_fondo.pack(side=RIGHT,fill=BOTH, expand=True)
+    imagen_fondo=PhotoImage(file="../assets/fondo.png")
+    imagen_reduccion_fondo=imagen_fondo.subsample(3,3)
+    fondo=Label(panel_fondo, bg="pink",image=imagen_reduccion_fondo,width=600,height=600)
+    fondo.pack(padx=0,pady=0,fill=BOTH,expand=True)
+    fondo.image = imagen_reduccion_fondo
+    nombre_programa=Label(fondo, text="Identificacion y Verificacion de Petrolisthes",width=600,font=("Arial",15,"bold"))
+    nombre_programa.pack(padx=0,pady=0,side=TOP,fill=NONE,expand=False)
+    materia_cursada=Label(fondo, text="Sistemas-Expertos-I2025",width=60,font=("Arial",15,"bold"))
+    materia_cursada.pack(padx=0,pady=0,side=BOTTOM,fill=NONE,expand=False)
+
+    imagen_logo=PhotoImage(file="../assets/logo_UDO.png")
+    imagen_reduccion_logo=imagen_logo.subsample(12,12)
+    titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF", command=mostrar_paginaweb_udone)
+    titulo_panel.pack(padx=0,pady=0,fill=BOTH, expand=True)
+    titulo_panel.image=imagen_reduccion_logo
+
+    boton=Button(panel_menu, text="IDENTIFICAR ESPECIE", bg="#4682B4", bd=2, command=mostrar_ascendente, font=("Arial",12,"bold"))
+    boton.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+    boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
+    boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+    boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
+    boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+    boton4=Button(panel_menu, text="CERRAR APLICACAION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
+    boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+# ================ Programa principal ==================
+
+mostrar_panel_principal()
 ventana.mainloop()

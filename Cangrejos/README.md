@@ -8,9 +8,11 @@ Este proyecto presenta un sistema experto innovador con una red neuronal integra
 
     Menú Principal: Una ventana inicial te dará la bienvenida con las siguientes opciones:
 
-    Ascendente: Inicia el cuestionario de identificación.
+    Identificaion: Inicia el cuestionario de identificación.
 
-    Acerca De: Muestra información sobre el proyecto y los desarrolladores.
+    Verificacion: Inicia un formulario sobre el nombre de la especie que quiere buscar
+
+    Pagina Web: Muestra información sobre el proyecto y los desarrolladores.
 
     Salir: Cierra la aplicación.
 
@@ -64,17 +66,18 @@ Este proyecto presenta un sistema experto innovador con una red neuronal integra
 
     NumPy: La biblioteca fundamental para computación numérica en Python.
 
+    Pillow (PIL): La biblioteca para el procesamiento de imágenes, necesaria para trabajar con PIL.Image y PIL.ImageTk.
+
+    tkinter: La biblioteca estándar de Python para crear interfaces gráficas de usuario (GUI). (Generalmente incluida con Python, pero se menciona por su uso explícito).
+
+    webbrowser: Un módulo que provee una interfaz para permitir la visualización de documentos web. (Generalmente incluida con Python, pero se menciona por su uso explícito).
+
     Instalación Rápida
     Puedes instalar todas las dependencias necesarias usando pip, el gestor de paquetes de Python:
 
     Bash
 
-    pip install tensorflow numpy
-    Nota: Si encuentras algún problema con la ejecución de pip, puedes intentar el siguiente comando para asegurarte de que se utilice el intérprete de Python correcto:
-
-    Bash
-
-    python -m pip install tensorflow numpy
+    pip install tensorflow numpy pillow
 
 ### 👨‍💻 Desarrolladores
 Este proyecto fue desarrollado por:
