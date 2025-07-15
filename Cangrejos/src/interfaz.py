@@ -359,7 +359,7 @@ def salir_programa():
 
 #JesusMarichal
 def mostrar_paginaweb():
-    webbrowser.open("https://github.com/Bioinformatico-udo/Sistemas-Expertos-I2025/tree/main")
+    webbrowser.open("https://jesusmarichal.github.io/Landingpage_Crustaceos/")
 
 def mostrar_paginaweb_udone():
     webbrowser.open("https://es.wikipedia.org/wiki/Universidad_de_Oriente_N%C3%BAcleo_de_Nueva_Esparta")
