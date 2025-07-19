@@ -17,31 +17,31 @@ clases = np.load(clases_path, allow_pickle=True)
 
 #imagenes
 lista_imagenes={
-    "Agua Salada":"../assets/agua_salada.png",
-    "Agua Dulce":"../assets/agua_dulce.png",
-    "Tamaño pequeño (2.0cm a 3.0cm)":"../assets/cangrejo_pequeno.png",
-    "Tamaño mediano (3.1cm a 4.0cm)":"../assets/cangrejo_mediano.png",
-    "Tamaño grande (mas de 4.0cm)":"../assets/cangrejo_grande.png",
-    "Caparazon Redondo":"../assets/caparazon_redondo.png",
-    "Caparazon Ovalado":"../assets/caparazon_ovalado.png",
-    "Caparazon Alargado":"../assets/caparazon_alargado.png",
-    "Color Rojo":"../assets/cangrejo_rojo.png",
-    "Color Verde":"../assets/cangrejo_verde.png",
-    "Color Marron":"../assets/cangrejo_marron.png",
-    "Si":"../assets/cangrejo_transparente.png",
-    "No":"../assets/cangrejo_no_transparente.png",
-    "Pinzas Grandes":"../assets/cangrejo_pinzas_grandes.png",
-    "Pinzas Pequeñas":"../assets/cangrejo_pinzas_pequenas.png",
-    "Patas nadadoras":"../assets/patas_caminadoras.png",
-    "Patas caminadoras":"../assets/patas_nadadoras.png",
-    "Antenas Cortas":"../assets/antenas_cortas.png",
-    "Antenas Largas":"../assets/antenas_largas.png",
-    "Habitat de zona Rocosas":"../assets/playa_rocosa.png",
-    "Habitat de zona Arenosa":"../assets/playa_arenosa.png",
-    "Zona de corrientes Fuertes":"../assets/corrientes_fuertes.png",
-    "Zona de corriente Suaves":"../assets/corrientes_suaves.png",
-    "Con huevos":"../assets/con_huevos.png",
-    "Sin huevos":"../assets/sin_huevos.png",
+    "Agua Salada":"../assets/images/agua_salada.png",
+    "Agua Dulce":"../assets/images/agua_dulce.png",
+    "Tamaño pequeño (2.0cm a 3.0cm)":"../assets/images/cangrejo_pequeno.png",
+    "Tamaño mediano (3.1cm a 4.0cm)":"../assets/images/cangrejo_mediano.png",
+    "Tamaño grande (mas de 4.0cm)":"../assets/images/cangrejo_grande.png",
+    "Caparazon Redondo":"../assets/images/caparazon_redondo.png",
+    "Caparazon Ovalado":"../assets/images/caparazon_ovalado.png",
+    "Caparazon Alargado":"../assets/images/caparazon_alargado.png",
+    "Color Rojo":"../assets/images/cangrejo_rojo.png",
+    "Color Verde":"../assets/images/cangrejo_verde.png",
+    "Color Marron":"../assets/images/cangrejo_marron.png",
+    "Si":"../assets/images/cangrejo_transparente.png",
+    "No":"../assets/images/cangrejo_no_transparente.png",
+    "Pinzas Grandes":"../assets/images/cangrejo_pinzas_grandes.png",
+    "Pinzas Pequeñas":"../assets/images/cangrejo_pinzas_pequenas.png",
+    "Patas nadadoras":"../assets/images/patas_caminadoras.png",
+    "Patas caminadoras":"../assets/images/patas_nadadoras.png",
+    "Antenas Cortas":"../assets/images/antenas_cortas.png",
+    "Antenas Largas":"../assets/images/antenas_largas.png",
+    "Habitat de zona Rocosas":"../assets/images/playa_rocosa.png",
+    "Habitat de zona Arenosa":"../assets/images/playa_arenosa.png",
+    "Zona de corrientes Fuertes":"../assets/images/corrientes_fuertes.png",
+    "Zona de corriente Suaves":"../assets/images/corrientes_suaves.png",
+    "Con huevos":"../assets/images/con_huevos.png",
+    "Sin huevos":"../assets/images/sin_huevos.png",
 }
 # Preguntas
 matriz_pregunta=[
@@ -89,56 +89,56 @@ lista_cangrejos={
         "property2":"* Región frontal tridentada (lóbulo medio triangular, al menos 2 veces más ancho que los laterales)",
         "property3":"* Artejo basal de la anténula con cresta transversal aserrada en la superficie expuesta",
         "property4":"* Tercer maxilípedo con surco longitudinal submarginal en el isquio",
-        "imagen":"../assets/tridentatus.png"
+        "imagen":"../assets/images/tridentatus.png"
     },
     "Petrolisthes_Tonsorius":{
         "property1":"* Caparazón subcuadrado (tan largo como ancho) casi liso, con pliegues cortos en la región posterolateral",
         "property2":"* Región frontal con surco medio profundo que se extiende hasta los lóbulos protogástricos",
         "property3":"* Flagelo de las antenas más largo que el caparazón, con setas escasas proximalmente",
         "property4":"* Carpo de los quelípedos con gránulos diagonales en el margen extensor",
-        "imagen":"../assets/tonsorius.png"
+        "imagen":"../assets/images/tonsorius.png"
     },
     "Petrolisthes_Jugosus":{
         "property1":"* Caparazón subcircular (más ancho que largo en hembras, más largo en machos)",
         "property2":"* Telson con 5 placas (vs. 7 en otras especies)",
         "property3":"* Región frontal trilobulada con surco medio profundo",
         "property4":"* Carpo de los quelípedos con margen extensor aserrado (gránulos en forma de espínulas)",
-        "imagen":"../assets/jugosus.png"
+        "imagen":"../assets/images/jugosus.png"
     },
     "Petrolisthes_Puelitus":{
         "property1":"* Caparazón subcircular con gránulos pequeños y surcos transversales",
         "property2":"* Flagelo de las antenas desarmado (sin setas) y más largo que el caparazón",
         "property3":"* Propodio de las patas caminadoras con 4 espinas móviles en el margen flexor (vs. 5 en otras especies)",
         "property4":"* Tercer maxilípedo con surco longitudinal en el isquio y 4 surcos en el carpo",
-        "imagen":"../assets/puelithus.png"
+        "imagen":"../assets/images/puelithus.png"
     },
     "Petrolisthes_Lewesi":{
         "property1":"* Caparazón subcuadrado con superficie irregular y pliegues dorsolaterales",
         "property2":"* Carpo de los quelípedos con 2–4 dientes triangulares en el margen flexor",
         "property3":"* Primer par de patas caminadoras con 5 espinas en el propodio; otros pares con 4",
         "property4":"* Región frontal ligeramente pubescente (setas aisladas)",
-        "imagen":"../assets/lewisi.png"
+        "imagen":"../assets/images/lewisi.png"
     },
     "Petrolisthes_Armatus":{
         "property1":"* Caparazón ligeramente más largo que ancho, con pliegues posterolaterales",
         "property2":"* Espina epibranquial presente (ausente en otras especies)",
         "property3":"* Carpo de los quelípedos con 3 dientes en el margen flexor y gránulos en el extensor",
         "property4":"* Mero de las patas caminadoras con 2–6 espinas en el margen extensor (vs. 0–4 en otras)",
-        "imagen":"../assets/armathus.png"
+        "imagen":"../assets/images/armathus.png"
     },
     "Petrolisthes_Gallatinus":{
         "property1":"* Caparazón más largo que ancho, con pliegues transversales setosos",
         "property2":"* Región frontal con depresión media en la superficie dorsal",
         "property3":"* Espina supraorbital presente (ausente en otras especies)",
         "property4":"* Mero de los quelípedos con estrías transversales setosas",
-        "imagen":"../assets/galathinus.png"
+        "imagen":"../assets/images/galathinus.png"
     },
     "Petrolisthes_Marginatus":{
         "property1":"* Caparazón casi liso (sin gránulos pronunciados), con surcos poco profundos",
         "property2":"* Espina exorbital presente (formando un ángulo orbital externo aserrado)",
         "property3":"* Carpo de los quelípedos con tubérculos espiniformes en el margen extensor",
         "property4":"* Tercer maxilípedo con estrías y gránulos en isquio, mero, carpo y propodio",
-        "imagen":"../assets/marginatus.png"
+        "imagen":"../assets/images/marginatus.png"
     },
 }
 
@@ -542,7 +542,7 @@ def mostrar_panel_principal():
 
     panel_fondo=Frame(panel_principal,width=600,height=600)
     panel_fondo.pack(side=RIGHT,fill=BOTH, expand=True)
-    imagen_fondo=PhotoImage(file="../assets/fondo.png")
+    imagen_fondo=PhotoImage(file="../assets/images/fondo.png")
     imagen_reduccion_fondo=imagen_fondo.subsample(3,3)
     fondo=Label(panel_fondo, bg="pink",image=imagen_reduccion_fondo,width=600,height=600)
     fondo.pack(padx=0,pady=0,fill=BOTH,expand=True)
@@ -552,7 +552,7 @@ def mostrar_panel_principal():
     materia_cursada=Label(fondo, text="Sistemas-Expertos-I2025",width=60,font=("Arial",15,"bold"))
     materia_cursada.pack(padx=0,pady=0,side=BOTTOM,fill=NONE,expand=False)
 
-    imagen_logo=PhotoImage(file="../assets/logo_UDO.png")
+    imagen_logo=PhotoImage(file="../assets/images/logo_UDO.png")
     imagen_reduccion_logo=imagen_logo.subsample(12,12)
     titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF", command=mostrar_paginaweb_udone)
     titulo_panel.pack(padx=0,pady=0,fill=BOTH, expand=True)
