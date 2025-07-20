@@ -110,7 +110,7 @@ lista_cangrejos={
         "property2":"* Flagelo de las antenas desarmado (sin setas) y más largo que el caparazón",
         "property3":"* Propodio de las patas caminadoras con 4 espinas móviles en el margen flexor (vs. 5 en otras especies)",
         "property4":"* Tercer maxilípedo con surco longitudinal en el isquio y 4 surcos en el carpo",
-        "imagen":"../assets/images/puelithus.png"
+        "imagen":"../assets/images/puelitus.png"
     },
     "Petrolisthes_Lewesi":{
         "property1":"* Caparazón subcuadrado con superficie irregular y pliegues dorsolaterales",
@@ -124,14 +124,14 @@ lista_cangrejos={
         "property2":"* Espina epibranquial presente (ausente en otras especies)",
         "property3":"* Carpo de los quelípedos con 3 dientes en el margen flexor y gránulos en el extensor",
         "property4":"* Mero de las patas caminadoras con 2–6 espinas en el margen extensor (vs. 0–4 en otras)",
-        "imagen":"../assets/images/armathus.png"
+        "imagen":"../assets/images/armatus.png"
     },
     "Petrolisthes_Gallatinus":{
         "property1":"* Caparazón más largo que ancho, con pliegues transversales setosos",
         "property2":"* Región frontal con depresión media en la superficie dorsal",
         "property3":"* Espina supraorbital presente (ausente en otras especies)",
         "property4":"* Mero de los quelípedos con estrías transversales setosas",
-        "imagen":"../assets/images/galathinus.png"
+        "imagen":"../assets/images/gallatinus.png"
     },
     "Petrolisthes_Marginatus":{
         "property1":"* Caparazón casi liso (sin gránulos pronunciados), con surcos poco profundos",
@@ -143,7 +143,7 @@ lista_cangrejos={
 }
 
 total_preguntas=23
-respuesta_vector = [None]*total_preguntas
+respuesta_vector = []
 indice_pregunta = 0 #Llevar el contrl de las preguntas
 max_preguntas= 10 #Maximo de preguntas
 min_preguntas= 0 #Minimo de pregunta
@@ -176,130 +176,128 @@ def registrar_respuesta():
     global indice_pregunta
     if indice_pregunta==0:# ¿En que ambiente habita?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[0] = 1
+            respuesta_vector[1] = 0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[0] = 0
+            respuesta_vector[1] = 1
             print("Se guardo la:", opcion_elegida.get())
+        print(f"Indice pregunta: {indice_pregunta} opcion elegida: {opcion_elegida.get()}")
     elif indice_pregunta==1:#  ¿Cual es su altura?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
-            respuesta_vector.append(0)
+            respuesta_vector[2]=1
+            respuesta_vector[3]=0
+            respuesta_vector[4]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[2]=0
+            respuesta_vector[3]=1
+            respuesta_vector[4]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion3":
-            respuesta_vector.append(0)
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[2]=0
+            respuesta_vector[3]=0
+            respuesta_vector[4]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==2:#  ¿Como es su caparazon?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
-            respuesta_vector.append(0)
+            respuesta_vector[5]=1
+            respuesta_vector[6]=0
+            respuesta_vector[7]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[5]=0
+            respuesta_vector[6]=1
+            respuesta_vector[7]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion3":
-            respuesta_vector.append(0)
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[5]=0
+            respuesta_vector[6]=0
+            respuesta_vector[7]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==3:# ¿De que color es?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
-            respuesta_vector.append(0)
+            respuesta_vector[8]=1
+            respuesta_vector[9]=0
+            respuesta_vector[10]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[8]=0
+            respuesta_vector[9]=1
+            respuesta_vector[10]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion3":
-            respuesta_vector.append(0)
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[8]=0
+            respuesta_vector[9]=0
+            respuesta_vector[10]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==4:# ¿Su cuerpo es transparente?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[11]=1
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[11]=0
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==5:# ¿Como son sus pinzas?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[12]=1
+            respuesta_vector[13]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[12]=0
+            respuesta_vector[13]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==6:# ¿Como son sus patas?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[14]=1
+            respuesta_vector[15]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[14]=0
+            respuesta_vector[15]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==7:# ¿De que tamaño son sus antenas?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[16]=1
+            respuesta_vector[17]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[16]=0
+            respuesta_vector[17]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==8:# ¿En que tipo de habitat se encuentra?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[18]=1
+            respuesta_vector[19]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[18]=0
+            respuesta_vector[19]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==9:# ¿Como son las corrientes de agua de donde se encuentra?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[20]=1
+            respuesta_vector[21]=0
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[20]=0
+            respuesta_vector[21]=1
             print("Se guardo la:", opcion_elegida.get())
     elif indice_pregunta==10:# ¿Esta ovigera(Con huevos)?
         if opcion_elegida.get()=="opcion1":
-            respuesta_vector.append(1)
-            respuesta_vector.append(0)
+            respuesta_vector[22]=1
             print("Se guardo la:", opcion_elegida.get())
         elif opcion_elegida.get()=="opcion2":
-            respuesta_vector.append(0)
-            respuesta_vector.append(1)
+            respuesta_vector[22]=0
             print("Se guardo la:", opcion_elegida.get())
+        print(f"Indice pregunta: {indice_pregunta} opcion elegida: {opcion_elegida.get()}")
 
 def inicializar_valores():
     global respuesta_vector
     global indice_pregunta
     global opcion_elegida
-    respuesta_vector=[]
+    respuesta_vector=[None]*total_preguntas
     indice_pregunta=0
     opcion_elegida.set("opcion0")
 
@@ -372,17 +370,17 @@ def limpiar_panel_principal():
 #GabrielRosas
 def mostrar_ascendente():
     limpiar_panel_principal()
+    print(len(respuesta_vector))
     print("Panel ascendente")
     print("Respuesta listas:",len(respuesta_vector))
     inicializar_valores()
     print("Respuesta listas:",len(respuesta_vector))
     print("posicion del indice_pregunta:",indice_pregunta)
-    print("posicion del indice_pregunta:",indice_pregunta)
     def pregunta_siguiente():
         global indice_pregunta
         if opcion_elegida.get()!="opcion0":
-            if indice_pregunta+1 >= min_preguntas and indice_pregunta+1 <= max_preguntas:
-                registrar_respuesta()
+            registrar_respuesta()
+            if indice_pregunta >= min_preguntas and indice_pregunta+1 <= max_preguntas:
                 indice_pregunta+=1
                 mostrar_pregunta_respuestas()
                 preguntas_completas="Pregunta Completadas:",indice_pregunta,"/",max_preguntas
@@ -397,6 +395,8 @@ def mostrar_ascendente():
 
     def pregunta_anterior():
         global indice_pregunta
+        if opcion_elegida.get()!= "opcion0":
+            opcion_elegida.set("opcion0")
         if indice_pregunta-1 >= min_preguntas and indice_pregunta-1 <= max_preguntas:
             indice_pregunta-=1
             mostrar_pregunta_respuestas()
