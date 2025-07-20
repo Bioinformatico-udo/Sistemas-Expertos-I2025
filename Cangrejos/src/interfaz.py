@@ -17,8 +17,8 @@ clases = np.load(clases_path, allow_pickle=True)
 
 #imagenes
 lista_imagenes={
-    "Agua Salada":"../assets/images/agua_salada.png",
-    "Agua Dulce":"../assets/images/agua_dulce.png",
+    "Marino":"../assets/images/agua_salada.png",
+    "Dulceacuicolas":"../assets/images/agua_dulce.png",
     "Tamaño pequeño (2.0cm a 3.0cm)":"../assets/images/cangrejo_pequeno.png",
     "Tamaño mediano (3.1cm a 4.0cm)":"../assets/images/cangrejo_mediano.png",
     "Tamaño grande (mas de 4.0cm)":"../assets/images/cangrejo_grande.png",
@@ -36,19 +36,19 @@ lista_imagenes={
     "Patas caminadoras":"../assets/images/patas_nadadoras.png",
     "Antenas Cortas":"../assets/images/antenas_cortas.png",
     "Antenas Largas":"../assets/images/antenas_largas.png",
-    "Habitat de zona Rocosas":"../assets/images/playa_rocosa.png",
-    "Habitat de zona Arenosa":"../assets/images/playa_arenosa.png",
-    "Zona de corrientes Fuertes":"../assets/images/corrientes_fuertes.png",
-    "Zona de corriente Suaves":"../assets/images/corrientes_suaves.png",
+    "Litoral Rocosas":"../assets/images/playa_rocosa.png",
+    "Litoral Arenosa":"../assets/images/playa_arenosa.png",
+    "Zona de fuertes energias":"../assets/images/corrientes_fuertes.png",
+    "Zona de bajas energias":"../assets/images/corrientes_suaves.png",
     "Con huevos":"../assets/images/con_huevos.png",
     "Sin huevos":"../assets/images/sin_huevos.png",
 }
 # Preguntas
 matriz_pregunta=[
-    ["¿En que tipo de Agua vive? ",
-        "Agua Salada",
-        "Agua Dulce"],
-    ["¿Cual es su tamaño? ",
+    ["¿En que ambiente habita? ",
+        "Marino",
+        "Dulceacuicolas"],
+    ["¿Cual es su altura? ",
         "Tamaño pequeño (2.0cm a 3.0cm)",
         "Tamaño mediano (3.1cm a 4.0cm)",
         "Tamaño grande (mas de 4.0cm)"],
@@ -73,11 +73,11 @@ matriz_pregunta=[
         "Antenas Cortas",
         "Antenas Largas"],
     ["¿En que tipo de habitat se encuentra? ",
-        "Habitat de zona Rocosas",
-        "Habitat de zona Arenosa"],
+        "Litoral Rocosas",
+        "Litoral Arenosa"],
     ["¿Como son las corrientes de agua de donde se encuentra?",
-        "Zona de corrientes Fuertes",
-        "Zona de corriente Suaves"],
+        "Zona de fuertes energias",
+        "Zona de bajas energias"],
     ["¿Esta ovigera(Con huevos)?",
         "Con huevos",
         "Sin huevos"]
@@ -142,8 +142,8 @@ lista_cangrejos={
     },
 }
 
-#pregunta=list(pregunta)
-respuesta_vector = []
+total_preguntas=23
+respuesta_vector = [None]*total_preguntas
 indice_pregunta = 0 #Llevar el contrl de las preguntas
 max_preguntas= 10 #Maximo de preguntas
 min_preguntas= 0 #Minimo de pregunta
@@ -174,7 +174,7 @@ def regresar_menu():
 #GabrielRosas
 def registrar_respuesta():
     global indice_pregunta
-    if indice_pregunta==0:# ¿En que tipo de Agua vive?
+    if indice_pregunta==0:# ¿En que ambiente habita?
         if opcion_elegida.get()=="opcion1":
             respuesta_vector.append(1)
             respuesta_vector.append(0)
@@ -183,7 +183,7 @@ def registrar_respuesta():
             respuesta_vector.append(0)
             respuesta_vector.append(1)
             print("Se guardo la:", opcion_elegida.get())
-    elif indice_pregunta==1:#  ¿Cual es su tamaño?
+    elif indice_pregunta==1:#  ¿Cual es su altura?
         if opcion_elegida.get()=="opcion1":
             respuesta_vector.append(1)
             respuesta_vector.append(0)
@@ -562,6 +562,9 @@ def mostrar_panel_principal():
     boton.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
     boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
+    boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
     boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
