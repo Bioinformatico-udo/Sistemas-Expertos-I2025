@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import tensorflow as tf
+import json
 from tkinter import *
 from tkinter import messagebox
 import webbrowser
@@ -14,6 +15,11 @@ clases_path = os.path.join(base_dir, "clases.npy")
 
 modelo = tf.keras.models.load_model(modelo_path)
 clases = np.load(clases_path, allow_pickle=True)
+# cargar archivo del glosario
+ruta_glosario= os.path.join("../assets","data", "glosario.json")
+with open(ruta_glosario,"r",encoding="utf-8") as archivo:
+        glosario = json.load(archivo)
+
 
 #imagenes
 lista_imagenes={
@@ -367,6 +373,26 @@ def limpiar_panel_principal():
     for widget in panel_principal.winfo_children():
         widget.destroy()
 
+def mostrar_glosario():
+    limpiar_panel_principal()
+    panel=Frame(panel_principal,width=800, height=600, bg="#6495ED")
+    panel.pack(padx=0, pady=0, fill=BOTH, expand=True)
+
+    titulo=Label(panel, text="Glosario", fon=("Arial",18,"bold"))
+    titulo.pack(padx=0, pady=5)
+
+    panel_glosario=Frame(panel, bg="#E6E6FA",width=600,height=400)
+    panel_glosario.pack(padx=10, pady=5,fill=BOTH,expand=True)
+
+    text=Text(panel_glosario, wrap=WORD, font=("Arial",12,""))
+    text.pack(padx=2,pady=2,fill=BOTH, expand=True)
+
+    for termino, definicion in glosario.items():
+        text.insert(END, f"*{termino}: {definicion} \n"+ "-"*150+"\n\n")
+
+    boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
+    boton_salir.pack(padx=100, pady=10)
+
 #GabrielRosas
 def mostrar_ascendente():
     limpiar_panel_principal()
@@ -564,7 +590,7 @@ def mostrar_panel_principal():
     boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=2,command=mostrar_glosario, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
     boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
@@ -576,4 +602,9 @@ def mostrar_panel_principal():
 # ================ Programa principal ==================
 
 mostrar_panel_principal()
+
+'''
+for termino, definicion in glosario.items():
+    print(f"**{termino}**: {definicion} \n"+ "-"*50)
+'''
 ventana.mainloop()
