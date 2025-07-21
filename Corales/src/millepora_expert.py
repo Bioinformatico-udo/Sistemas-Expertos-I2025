@@ -1,11 +1,7 @@
-# Sistema Experto para Reconocimiento de Corales Millepora en Venezuela
-
 from experta import *
-import sys
 
-# Definición de hechos (Facts)
 class CoralCharacteristic(Fact):
-    """Características morfológicas del coral"""
+    """Características observables del coral"""
     pass
 
 class IdentificationResult(Fact):
@@ -13,145 +9,118 @@ class IdentificationResult(Fact):
     pass
 
 class MilleporaExpert(KnowledgeEngine):
-    """Sistema experto para identificación de especies de Millepora"""
-
     def __init__(self):
         super().__init__()
         self.identified_species = None
         self.confidence = 0.0
+        self.diagnostic_features = []
+        self.species_info = {
+            "Millepora alcicornis": {
+                "description": "Colonia ramificada con ramas cilíndricas o aplanadas. "
+                               "Las ramas pueden ser gruesas o delgadas, generalmente "
+                               "con puntas redondeadas.",
+                "color": "Marrón amarillento a anaranjado",
+                "habitat": "Arrecifes someros con fuerte oleaje (1-35m de profundidad). "
+                           "Prefiere zonas expuestas a corrientes.",
+                "distribution": "Veracruz, Banco de Campeche, Caribe mexicano, "
+                                "Florida, Bahamas, Antillas Mayores y Menores"
+            },
+            "Millepora complanata": {
+                "description": "Láminas verticales en forma de abanico o cresta. "
+                               "Las láminas pueden ser lisas o con pequeñas "
+                               "protuberancias en la superficie.",
+                "color": "Amarillo dorado a marrón claro",
+                "habitat": "Áreas con oleaje moderado a fuerte (1-18m de profundidad). "
+                           "Común en crestas arrecifales y pendientes.",
+                "distribution": "Caribe mexicano, Banco de Campeche, Veracruz, "
+                                "Belice, Honduras, Islas Cayman"
+            },
+            "Millepora squarrosa": {
+                "description": "Forma aplanada con protuberancias distintivas, "
+                               "crecimiento irregular. Superficie rugosa con "
+                               "numerosas pequeñas elevaciones.",
+                "color": "Marrón claro a beige",
+                "habitat": "Zonas someras poco conocidas, generalmente entre "
+                           "1-5m de profundidad. Prefiere áreas protegidas.",
+                "distribution": "Arrecife Triángulo Oeste (México), "
+                                "algunos reportes en Cuba y Jamaica"
+            }
+        }
 
-    # Reglas de identificación
+        self.scores = {
+            "Millepora alcicornis": 0,
+            "Millepora complanata": 0,
+            "Millepora squarrosa": 0
+        }
 
-    @Rule(CoralCharacteristic(superficie='con_poros'),
-          CoralCharacteristic(septa='ausentes'))
-    def es_millepora(self):
-        """Identifica si es del género Millepora"""
-        self.declare(CoralCharacteristic(genero='Millepora'))
-        print("✓ Identificado como género Millepora")
+    @Rule(CoralCharacteristic(forma="ramificada"), CoralCharacteristic(ramas=MATCH.ramas))
+    def puntuar_alcicornis_forma(self, ramas):
+        if ramas in ["cilindricas", "aplanadas"]:
+            self.scores["Millepora alcicornis"] += 30
+            self.diagnostic_features.append("Forma ramificada con ramas cilíndricas o aplanadas")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(forma_colonia='ramificada'),
-          CoralCharacteristic(forma_ramas='delgadas_aplanadas'),
-          CoralCharacteristic(espesor_ramas='10-15mm'))
-    def es_millepora_alcicornis(self):
-        """Identifica M. alcicornis"""
-        self.identified_species = "Millepora alcicornis"
-        self.confidence = 0.85
-        self.declare(IdentificationResult(species="Millepora alcicornis", confidence=0.85))
-        print("✓ Identificado como Millepora alcicornis (85% confianza)")
+    @Rule(CoralCharacteristic(color=MATCH.color))
+    def puntuar_alcicornis_color(self, color):
+        if color in ["amarillo", "naranja"]:
+            self.scores["Millepora alcicornis"] += 20
+            self.diagnostic_features.append(f"Color {color}")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(forma_colonia='laminar'),
-          CoralCharacteristic(forma_ramas='hojas_delgadas'),
-          CoralCharacteristic(base='incrustante'))
-    def es_millepora_complanata(self):
-        """Identifica M. complanata"""
-        self.identified_species = "Millepora complanata"
-        self.confidence = 0.90
-        self.declare(IdentificationResult(species="Millepora complanata", confidence=0.90))
-        print("✓ Identificado como Millepora complanata (90% confianza)")
+    @Rule(CoralCharacteristic(oleaje="fuerte"))
+    def puntuar_alcicornis_oleaje(self):
+        self.scores["Millepora alcicornis"] += 20
+        self.diagnostic_features.append("Habita en zonas de oleaje fuerte")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(forma_colonia='boxwork'),
-          CoralCharacteristic(forma_ramas='robustas_interconectadas'),
-          CoralCharacteristic(superficie='rugosa'))
-    def es_millepora_squarrosa(self):
-        """Identifica M. squarrosa"""
-        self.identified_species = "Millepora squarrosa"
-        self.confidence = 0.80
-        self.declare(IdentificationResult(species="Millepora squarrosa", confidence=0.80))
-        print("✓ Identificado como Millepora squarrosa (80% confianza)")
+    @Rule(CoralCharacteristic(forma="laminar"), CoralCharacteristic(estructura=MATCH.estructura))
+    def puntuar_complanata_forma(self, estructura):
+        if estructura in ["abanico", "cresta"]:
+            self.scores["Millepora complanata"] += 30
+            self.diagnostic_features.append("Forma laminar en abanico o cresta")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(color='amarillo-naranja'))
-    def refuerza_alcicornis(self):
-        """Refuerza identificación de M. alcicornis por color"""
-        if self.identified_species == "Millepora alcicornis":
-            self.confidence = min(0.95, self.confidence + 0.10)
-            print("✓ Confianza aumentada para M. alcicornis por color característico")
+    @Rule(CoralCharacteristic(color=MATCH.color))
+    def puntuar_complanata_color(self, color):
+        if color in ["amarillo", "marron_claro"]:
+            self.scores["Millepora complanata"] += 20
+            self.diagnostic_features.append(f"Color {color}")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(color='mostaza_marron'))
-    def refuerza_complanata(self):
-        """Refuerza identificación de M. complanata por color"""
-        if self.identified_species == "Millepora complanata":
-            self.confidence = min(0.95, self.confidence + 0.05)
-            print("✓ Confianza aumentada para M. complanata por color característico")
+    @Rule(CoralCharacteristic(oleaje=MATCH.oleaje))
+    def puntuar_complanata_oleaje(self, oleaje):
+        if oleaje in ["moderado", "fuerte"]:
+            self.scores["Millepora complanata"] += 20
+            self.diagnostic_features.append(f"Habita en zonas de oleaje {oleaje}")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(profundidad='0-15m'),
-          CoralCharacteristic(habitat='arrecifes_poco_profundos'))
-    def habitat_complanata(self):
-        """Identifica habitat típico de M. complanata"""
-        if self.identified_species == "Millepora complanata":
-            self.confidence = min(0.95, self.confidence + 0.05)
-            print("✓ Habitat confirma M. complanata")
+    @Rule(CoralCharacteristic(forma="aplanada"), CoralCharacteristic(superficie="protuberancias"))
+    def puntuar_squarrosa_forma(self):
+        self.scores["Millepora squarrosa"] += 30
+        self.diagnostic_features.append("Forma aplanada con protuberancias")
 
-    @Rule(CoralCharacteristic(genero='Millepora'),
-          CoralCharacteristic(profundidad='0-50m'),
-          CoralCharacteristic(habitat='aguas_tranquilas_agitadas'))
-    def habitat_alcicornis(self):
-        """Identifica habitat amplio de M. alcicornis"""
-        if self.identified_species == "Millepora alcicornis":
-            self.confidence = min(0.95, self.confidence + 0.05)
-            print("✓ Habitat amplio confirma M. alcicornis")
+    @Rule(CoralCharacteristic(color=MATCH.color))
+    def puntuar_squarrosa_color(self, color):
+        if color in ["marron_claro", "beige"]:
+            self.scores["Millepora squarrosa"] += 20
+            self.diagnostic_features.append(f"Color {color}")
+
+    @Rule(CoralCharacteristic(habitat="someras"))
+    def puntuar_squarrosa_habitat(self):
+        self.scores["Millepora squarrosa"] += 20
+        self.diagnostic_features.append("Habita en aguas someras")
 
     @Rule(NOT(IdentificationResult()))
-    def no_identification(self):
-        """Cuando no se puede identificar la especie"""
-        print("⚠ No se pudo identificar la especie con certeza")
-        print("Revisar características morfológicas adicionales")
-
-# Función para crear nueva identificación interactiva
-def interactive_identification():
-    """Identificación interactiva paso a paso"""
-    print("\n=== IDENTIFICACIÓN INTERACTIVA ===")
-    print("Responda las siguientes preguntas sobre el coral:")
-
-    expert = MilleporaExpert()
-    expert.reset()
-
-    # Preguntas básicas
-    superficie = input("¿La superficie tiene pequeños poros? (si/no): ").lower()
-    if superficie == 'si':
-        expert.declare(CoralCharacteristic(superficie='con_poros'))
-
-    septa = input("¿Hay septa presentes? (si/no): ").lower()
-    if septa == 'no':
-        expert.declare(CoralCharacteristic(septa='ausentes'))
-
-    forma = input("¿Forma de la colonia? (ramificada/laminar/boxwork): ").lower()
-    expert.declare(CoralCharacteristic(forma_colonia=forma))
-
-    if forma == 'ramificada':
-        ramas = input("¿Forma de las ramas? (delgadas_aplanadas/robustas): ").lower()
-        expert.declare(CoralCharacteristic(forma_ramas=ramas))
-
-        if ramas == 'delgadas_aplanadas':
-            espesor = input("¿Espesor de ramas? (10-15mm/otro): ").lower()
-            expert.declare(CoralCharacteristic(espesor_ramas=espesor))
-
-    elif forma == 'laminar':
-        base = input("¿Tiene base incrustante? (si/no): ").lower()
-        if base == 'si':
-            expert.declare(CoralCharacteristic(base='incrustante'))
-        expert.declare(CoralCharacteristic(forma_ramas='hojas_delgadas'))
-
-    elif forma == 'boxwork':
-        expert.declare(CoralCharacteristic(forma_ramas='robustas_interconectadas'))
-        superficie_rugosa = input("¿Superficie rugosa? (si/no): ").lower()
-        if superficie_rugosa == 'si':
-            expert.declare(CoralCharacteristic(superficie='rugosa'))
-
-    # Ejecutar motor de inferencia
-    expert.run()
-
-    if expert.identified_species:
-        print(f"\nRESULTADO: {expert.identified_species}")
-        print(f"Confianza: {expert.confidence:.2f}")
-    else:
-        print("\nNo se pudo identificar la especie con certeza")
-        print("Consulte con un taxonomista especializado")
-
-if __name__ == "__main__":
-    interactive_identification()
+    def evaluar_puntuaciones(self):
+        max_score = max(self.scores.values())
+        if max_score > 40:
+            for species, score in self.scores.items():
+                if score == max_score:
+                    self.identified_species = species
+                    self.confidence = max_score / 100
+                    self.declare(IdentificationResult(
+                        species=species,
+                        confidence=self.confidence,
+                        info=self.species_info[species]
+                    ))
+                    self.diagnostic_features.append(f"Identificado por puntuación: {species}")
+        else:
+            self.declare(IdentificationResult(
+                species="Indeterminado",
+                confidence=0.0,
+                info={"description": "No hay suficientes datos para identificar la especie."}
+            ))
