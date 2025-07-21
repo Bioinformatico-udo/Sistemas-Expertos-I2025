@@ -1,50 +1,51 @@
 import tkinter as tk
-from PIL import Image, ImageTk  # Necesario para manejar imágenes
+from PIL import Image, ImageTk # Necesario para manejar imágenes
 
 class AlgaIdentifierApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Identificador de Algas Marinas")
-        self.root.geometry("600x500")  # Aumentamos un poco el tamaño para las imágenes
+        self.root.geometry("700x600")
         self.root.configure(bg='#e0f7fa')
-        
+
         # Variables para manejar imágenes
         self.image_label = None
         self.photo = None
-        
-        # Configurar estilo
         self.font_title = ('Arial', 14, 'bold')
         self.font_question = ('Arial', 12)
         self.font_button = ('Arial', 10, 'bold')
-        
-        # Crear widgets principales
+
+        # --- Frame del Encabezado Superior ---
         self.title_label = tk.Label(root, text="Sistema Experto para Identificación de Algas Marinas", 
-                                  font=self.font_title, bg='#00796b', fg='white', pady=10)
-        self.title_label.pack(fill='x')
-        
+                                     font=self.font_title, bg='#00796b', fg='white', pady=10)
+        self.title_label.pack(fill='x', side=tk.TOP)
+
+        # --- Etiqueta de la Pregunta ---
         self.question_label = tk.Label(root, text="", font=self.font_question, 
-                                     bg='#e0f7fa', wraplength=550, justify='left')
-        self.question_label.pack(pady=20, padx=20)
+                                        bg='#e0f7fa', wraplength=650, justify='center')
+        self.question_label.pack(pady=20, padx=20, fill='x')
         
-        # Frame para contener la imagen
-        self.image_frame = tk.Frame(root, bg='#e0f7fa', height=150)
-        self.image_frame.pack(fill='x', pady=5)
-        
+        # --- Frame para contener la imagen ---
+        self.image_frame = tk.Frame(root, bg='#e0f7fa')
+        self.image_frame.pack(fill='both', expand=True)
+
+        # --- Frame para contener los botones de opciones ---
         self.button_frame = tk.Frame(root, bg='#e0f7fa')
-        self.button_frame.pack(pady=10)
-        
+        self.button_frame.pack(pady=10, fill='x')
+
         self.option_a = tk.Button(self.button_frame, text="", font=self.font_button, 
-                                 command=lambda: self.select_option('a'), width=75, bg='#4db6ac')
-        self.option_a.pack(side='left', padx=10)
+                                 command=lambda: self.select_option('a'), bg='#4db6ac', fg='white', relief="raised")
+        self.option_a.pack(side=tk.LEFT, padx=5, expand=True, fill=tk.X) 
         
         self.option_b = tk.Button(self.button_frame, text="", font=self.font_button, 
-                                 command=lambda: self.select_option('b'), width=75, bg='#4db6ac')
-        self.option_b.pack(side='left', padx=10)
+                                 command=lambda: self.select_option('b'), bg='#4db6ac', fg='white', relief="raised")
+        self.option_b.pack(side=tk.LEFT, padx=5, expand=True, fill=tk.X)
         
+        # --- Botón de Reiniciar ---
         self.restart_button = tk.Button(root, text="Reiniciar Identificación", font=self.font_button,
-                                       command=self.restart, bg='#ff9800', width=20)
-        self.restart_button.pack(pady=20)
-        self.restart_button.pack_forget()  # Ocultar inicialmente
+                                         command=self.restart, bg='#ff9800', fg='white', width=25)
+        self.restart_button.pack(pady=20, side=tk.BOTTOM)
+        self.restart_button.pack_forget() # Ocultar inicialmente
         
         # Iniciar el proceso
         self.current_step = 1
@@ -58,8 +59,8 @@ class AlgaIdentifierApp:
         self.clear_image()
         
         # Mostrar botones de opciones
-        self.option_a.pack(side='left', padx=10)
-        self.option_b.pack(side='left', padx=10)
+        self.option_a.pack(side=tk.LEFT, padx=5, expand=True, fill=tk.X)
+        self.option_b.pack(side=tk.LEFT, padx=5, expand=True, fill=tk.X)
         
         # Mostrar pregunta según el paso actual
         if self.current_step == 1:
@@ -135,6 +136,8 @@ class AlgaIdentifierApp:
 
     def select_option(self, option):
         # Lógica de identificación basada en las respuestas
+        # ... (Tu lógica existente para avanzar en los pasos o mostrar resultados) ...
+
         if self.current_step == 1:
             if option == 'b':
                 self.show_result("Caulerpa fastigiata")
@@ -196,7 +199,7 @@ class AlgaIdentifierApp:
                 self.show_result("Caulerpa macrophysa")
         
         # Mostrar siguiente pregunta si no se llegó a un resultado
-        if not hasattr(self, 'result_shown'):
+        if not hasattr(self, 'result_shown') or not self.result_shown:
             self.show_question()
 
     def clear_image(self):
@@ -204,16 +207,18 @@ class AlgaIdentifierApp:
         if self.image_label:
             self.image_label.destroy()
             self.image_label = None
-            self.photo = None  # Importante para liberar memoria
+            self.photo = None
+        
+        if hasattr(self, 'name_label') and self.name_label:
             self.name_label.destroy()
+            self.name_label = None
 
     def show_result(self, species):
-        self.result_shown = True
+        self.result_shown = True # Bandera para indicar que un resultado ya ha sido mostrado
         self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}")
-        self.option_a.pack_forget()
+        self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
-        self.restart_button.pack(pady=20)
-        
+        self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
         # Limpiar imagen previa
         self.clear_image()
         
@@ -221,25 +226,24 @@ class AlgaIdentifierApp:
         try:
             # Intenta cargar la imagen
             image = Image.open(f"./assets/img/{species.lower().replace(' ', '_')}.png")
-            image = image.resize((250, 250), Image.LANCZOS)  # Redimensionar
+            image.thumbnail((300, 300), Image.LANCZOS)
             self.photo = ImageTk.PhotoImage(image)
             
-            # Crear etiqueta para la imagen
             self.image_label = tk.Label(self.image_frame, image=self.photo, bg='#e0f7fa')
             self.image_label.pack(pady=10)
             
-            # Añadir nombre científico
+            # Añadir nombre científico debajo de la imagen
             self.name_label = tk.Label(self.image_frame, text=species, font=('Arial', 10, 'italic'), bg='#e0f7fa')
             self.name_label.pack()
         except Exception as e:
             # Si no se encuentra la imagen, no mostrar nada
-            print(f"No se pudo cargar la imagen: {e}")
+            print(f"No se pudo cargar la imagen para {species}: {e}")
 
     def restart(self):
         # Resetear la aplicación al estado inicial
         self.current_step = 1
         
-        # Eliminar atributo de resultado
+        # Eliminar atributo de resultado para que show_question() funcione
         if hasattr(self, 'result_shown'):
             delattr(self, 'result_shown')
         
