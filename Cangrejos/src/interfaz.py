@@ -497,17 +497,32 @@ def mostrar_descendente():
             widget.destroy()
 
     def mostrar_datos(nombre):
+        
+        print(nombre)
         for i in range(1,5):
             propiedad="property"+str(i)
-            print(nombre)
             print(lista_cangrejos[nombre][propiedad])
+            print("SI")
+            print("NO")
+            print("NO ESTOY SEGURO")
             resultado=Label(panel_mostrar_resultado,text=lista_cangrejos[nombre][propiedad], bg="white", font=("Arial",10,"bold"))
-            resultado.pack(padx=0,pady=0,fill=BOTH, expand=True)
+            resultado.pack(padx=0,pady=0,fill=None, expand=False)
+            panel_opciones=Frame(panel_mostrar_resultado, bg="gray")
+            panel_opciones.pack(padx=5,pady=0)
+            radio=Radiobutton(panel_opciones,variable=opcion_elegida, value="SI" , text="SI")
+            radio2=Radiobutton(panel_opciones,variable=opcion_elegida, value="NO" , text="NO")
+            radio3=Radiobutton(panel_opciones,variable=opcion_elegida, value="TALVEZ" , text="TAL VEZ")
+            radio.grid(padx=5, pady=0, row=0,column=0)
+            radio2.grid(padx=5, pady=0, row=0,column=1)
+            radio3.grid(padx=5, pady=0, row=0,column=2)
+
+        '''
         imagen=PhotoImage(file=lista_cangrejos[nombre]["imagen"])
         imagen_reduccion=imagen.subsample(10,10)
         presentar_image=Label(panel_mostrar_resultado, image=imagen_reduccion)
         presentar_image.pack(padx=0,pady=5)
         presentar_image.image=imagen_reduccion
+        '''
 
     def buscar_especie():
         encontrado=""
