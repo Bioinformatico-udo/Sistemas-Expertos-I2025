@@ -118,7 +118,7 @@ lista_cangrejos={
         "property4":"* Tercer maxilípedo con surco longitudinal en el isquio y 4 surcos en el carpo",
         "imagen":"../assets/images/puelitus.png"
     },
-    "Petrolisthes_Lewesi":{
+    "Petrolisthes_Magdalenensis":{
         "property1":"* Caparazón subcuadrado con superficie irregular y pliegues dorsolaterales",
         "property2":"* Carpo de los quelípedos con 2–4 dientes triangulares en el margen flexor",
         "property3":"* Primer par de patas caminadoras con 5 espinas en el propodio; otros pares con 4",
