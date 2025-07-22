@@ -5,18 +5,26 @@ from PIL import Image, ImageTk
 from datetime import datetime
 from millepora_expert import MilleporaExpert, CoralCharacteristic
 
+
 class CoralApp(ctk.CTk):
     def __init__(self):
         super().__init__()
+
         self.title("Identificación de Corales Millepora del Atlántico")
         self.geometry("1100x800")
         self.resizable(False, False)
+
+        # Cambiar icono de la ventana
+        icon_path = os.path.join(os.path.dirname(__file__), "assets", "iconos", "icono.ico")
+        if os.path.exists(icon_path):
+            self.iconbitmap(icon_path)
 
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
 
         self.historial = []
         self._setup_ui()
+        self.expert = MilleporaExpert()
 
     def _setup_ui(self):
         self.configure(bg="#021F3F")
@@ -43,13 +51,13 @@ class CoralApp(ctk.CTk):
         self.tabs.add("Identificación")
         self.tabs.add("Resultados")
         self.tabs.add("Historial")
+        self.tabs.add("Acerca de")
 
         self._setup_inicio_tab()
         self._setup_identificacion_tab()
         self._setup_resultados_tab()
         self._setup_historial_tab()
-
-        self.expert = MilleporaExpert()
+        self._setup_acerca_tab()
 
     def _setup_inicio_tab(self):
         tab = self.tabs.tab("Inicio")
@@ -76,299 +84,220 @@ class CoralApp(ctk.CTk):
                  "para determinar a qué especie pertenece.",
             font=ctk.CTkFont(size=16),
             wraplength=600,
-            justify="center"
-        ).pack(pady=20)
-
+            justify="center").pack(pady=20)
+        
     def _setup_identificacion_tab(self):
         tab = self.tabs.tab("Identificación")
 
-        self.ident_tabs = ctk.CTkTabview(tab, width=950, height=550)
-        self.ident_tabs.pack(pady=10)
+        container = ctk.CTkFrame(tab)
+        container.pack(expand=True, fill="both", padx=10, pady=10)
+
+        self.ident_tabs = ctk.CTkTabview(container, width=950, height=500)
+        self.ident_tabs.pack(pady=(20, 10))
+        self.ident_tabs.pack_propagate(False)
 
         self.ident_tabs.add("Forma")
         self.ident_tabs.add("Color")
         self.ident_tabs.add("Oleaje")
         self.ident_tabs.add("Detalles")
 
-        self.forma_var = ctk.StringVar(value="")
-        self.color_var = ctk.StringVar(value="")
-        self.oleaje_var = ctk.StringVar(value="")
-        self.extra_var = ctk.StringVar(value="")
+        self.forma_var = ctk.StringVar()
+        self.color_var = ctk.StringVar()
+        self.oleaje_var = ctk.StringVar()
+        self.detalle_var = ctk.StringVar()
 
-        self._setup_forma_tab()
-        self._setup_color_tab()
-        self._setup_oleaje_tab()
-        self._setup_detalles_tab()
+        self._setup_radio_tab(self.ident_tabs.tab("Forma"), [
+            ("ramificada", "ramificada.jpg", "Ramificada"),
+            ("laminar", "laminar.jpg", "Laminar"),
+            ("aplanada", "aplanada.jpeg", "Aplanada")
+        ], self.forma_var, "forma")
 
-        ctk.CTkButton(
-            tab,
-            text="Identificar Especie",
+        self._setup_radio_tab(self.ident_tabs.tab("Color"), [
+            ("amarillo", "amarillo.jpg", "Amarillo"),
+            ("naranja", "anaranjado.png", "Naranja"),
+            ("marron_claro", "marron.png", "Marrón Claro"),
+            ("beige", "beige.jpg", "Beige")
+        ], self.color_var, "colores")
+
+        self._setup_radio_tab(self.ident_tabs.tab("Oleaje"), [
+            ("fuerte", "oleaje_fuerte.jpg", "Fuerte"),
+            ("moderado", "oleaje_moderado.jpeg", "Moderado")
+        ], self.oleaje_var, "oleaje")
+
+        self._setup_radio_tab(self.ident_tabs.tab("Detalles"), [
+            ("cilindricas", "cilindricas.jpeg", "Cilíndricas"),
+            ("aplanadas", "aplanados .jpeg", "Aplanadas"),
+            ("abanico", "abanico.jpg", "Abanico"),
+            ("cresta", "cresta.jpeg", "Cresta"),
+            ("protuberancias", "protuberancia.jpg", "Protuberancias"),
+            ("someras", "someras.jpeg", "Aguas someras")
+        ], self.detalle_var, "detalles")
+
+        
+        self.ident_button = ctk.CTkButton(
+            master=container,
+            text="🔍 IDENTIFICAR ESPECIE",
             command=self.run_inference,
-            font=ctk.CTkFont(size=16, weight="bold"),
-            height=40,
-            width=200
-        ).pack(pady=20)
+            font=ctk.CTkFont(size=20, weight="bold"),
+            height=120,
+            width=400,
+            fg_color="#0077cc",
+            hover_color="#005f99",
+            text_color="white",
+            corner_radius=10
+        )
+        self.ident_button.pack(pady=(30, 10))
 
-    def _setup_forma_tab(self):
-        tab = self.ident_tabs.tab("Forma")
-        ctk.CTkLabel(
-            tab,
-            text="Seleccione la forma principal del coral:",
-            font=ctk.CTkFont(size=18, weight="bold")
-        ).pack(pady=10)
 
-        img_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        img_frame.pack()
-
-        formas = [
-            ("ramificada", "forma/ramificada.jpg", "Forma ramificada"),
-            ("laminar", "forma/laminar.jpg", "Láminas en abanico"),
-            ("aplanada", "forma/aplanada.jpeg", "Estructura aplanada")
-        ]
-
-        for forma, img_file, desc in formas:
-            frame = ctk.CTkFrame(img_frame)
-            frame.pack(side="left", padx=10, pady=10, fill="both", expand=True)
-
-            img_path = os.path.join(os.path.dirname(__file__), "assets", img_file)
-            img = Image.open(img_path).resize((200, 200))
+    def _setup_radio_tab(self, tab, items, variable, folder):
+        ctk.CTkLabel(tab, text="Seleccione una opción:", font=ctk.CTkFont(size=18, weight="bold")).pack(pady=10)
+        frame = ctk.CTkFrame(tab, fg_color="transparent")
+        frame.pack()
+        for item, img_file, desc in items:
+            box = ctk.CTkFrame(frame)
+            box.pack(side="left", padx=10, pady=10)
+            path = os.path.join(os.path.dirname(__file__), "assets", folder, img_file)
+            img = Image.open(path).resize((200, 200))
             photo = ImageTk.PhotoImage(img)
+            if not hasattr(self, f'{folder}_images'):
+                setattr(self, f'{folder}_images', [])
+            getattr(self, f'{folder}_images').append(photo)
+            ctk.CTkLabel(box, image=photo, text="").pack(pady=5)
+            ctk.CTkRadioButton(box, text=desc, variable=variable, value=item).pack()
 
-            if not hasattr(self, 'forma_images'):
-                self.forma_images = []
-            self.forma_images.append(photo)
+    def run_inference(self):
+        self.expert = MilleporaExpert()
 
-            ctk.CTkLabel(frame, image=photo, text="").pack(pady=5)
-            ctk.CTkRadioButton(
-                frame,
-                text=desc,
-                variable=self.forma_var,
-                value=forma,
-                font=ctk.CTkFont(size=14)
-            ).pack(pady=5)
+        if self.forma_var.get():
+            self.expert.declare(CoralCharacteristic(forma=self.forma_var.get()))
+        if self.color_var.get():
+            self.expert.declare(CoralCharacteristic(color=self.color_var.get()))
+        if self.oleaje_var.get():
+            self.expert.declare(CoralCharacteristic(oleaje=self.oleaje_var.get()))
+        if self.detalle_var.get():
+            d = self.detalle_var.get()
+            self.expert.declare(CoralCharacteristic(estructura=d))
+            self.expert.declare(CoralCharacteristic(ramas=d))
+            self.expert.declare(CoralCharacteristic(superficie=d))
+            self.expert.declare(CoralCharacteristic(habitat=d))
 
-    def _setup_color_tab(self):
-        tab = self.ident_tabs.tab("Color")
-        ctk.CTkLabel(
-            tab,
-            text="Seleccione el color predominante del coral:",
-            font=ctk.CTkFont(size=18, weight="bold")
-        ).pack(pady=10)
+        try:
+            self.expert.run()
 
-        img_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        img_frame.pack()
-
-        colores = [
-            ("amarillo", "colores/amarillo.jpg", "Amarillo brillante"),
-            ("naranja", "colores/anaranjado.png", "Naranja intenso"),
-            ("marron_claro", "colores/marron.png", "Marrón claro"),
-            ("beige", "colores/beige.jpg", "Beige o crema")
-        ]
-
-        for color, img_file, desc in colores:
-            frame = ctk.CTkFrame(img_frame)
-            frame.pack(side="left", padx=10, pady=10, fill="both", expand=True)
-
-            img_path = os.path.join(os.path.dirname(__file__), "assets", img_file)
-            img = Image.open(img_path).resize((200, 200))
-            photo = ImageTk.PhotoImage(img)
-
-            if not hasattr(self, 'color_images'):
-                self.color_images = []
-            self.color_images.append(photo)
-
-            ctk.CTkLabel(frame, image=photo, text="").pack(pady=5)
-            ctk.CTkRadioButton(
-                frame,
-                text=desc,
-                variable=self.color_var,
-                value=color,
-                font=ctk.CTkFont(size=14)
-            ).pack(pady=5)
-
-    def _setup_oleaje_tab(self):
-        tab = self.ident_tabs.tab("Oleaje")
-        ctk.CTkLabel(
-            tab,
-            text="Seleccione las condiciones de oleaje:",
-            font=ctk.CTkFont(size=18, weight="bold")
-        ).pack(pady=10)
-
-        img_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        img_frame.pack()
-
-        oleajes = [
-            ("fuerte", "oleaje/oleaje_fuerte.jpg", "Oleaje fuerte"),
-            ("moderado", "oleaje/oleaje_moderado.jpeg", "Oleaje moderado")
-        ]
-
-        for oleaje, img_file, desc in oleajes:
-            frame = ctk.CTkFrame(img_frame)
-            frame.pack(side="left", padx=10, pady=10, fill="both", expand=True)
-
-            img_path = os.path.join(os.path.dirname(__file__), "assets", img_file)
-            img = Image.open(img_path).resize((200, 200))
-            photo = ImageTk.PhotoImage(img)
-
-            if not hasattr(self, 'oleaje_images'):
-                self.oleaje_images = []
-            self.oleaje_images.append(photo)
-
-            ctk.CTkLabel(frame, image=photo, text="").pack(pady=5)
-            ctk.CTkRadioButton(
-                frame,
-                text=desc,
-                variable=self.oleaje_var,
-                value=oleaje,
-                font=ctk.CTkFont(size=14)
-            ).pack(pady=5)
-
-    def _setup_detalles_tab(self):
-        tab = self.ident_tabs.tab("Detalles")
-        ctk.CTkLabel(
-            tab,
-            text="Seleccione detalles adicionales (opcional):",
-            font=ctk.CTkFont(size=18, weight="bold")
-        ).pack(pady=10)
-
-        img_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        img_frame.pack()
-
-        detalles = [
-            ("", "detalles/ninguno.png", "Sin detalle adicional"),
-            ("cilindricas", "detalles/cilindricas.jpeg", "Ramificaciones cilíndricas"),
-            ("aplanadas", "detalles/detalle_aplanada.jpeg", "Ramificaciones aplanadas"),
-            ("abanico", "detalles/abanico.jpg", "Forma de abanico"),
-            ("cresta", "detalles/cresta.jpeg", "Forma de cresta"),
-            ("protuberancias", "detalles/protuberancia.jpg", "Protuberancias"),
-            ("someras", "detalles/someras.jpeg", "Aguas someras")
-        ]
-
-        for detalle, img_file, desc in detalles:
-            frame = ctk.CTkFrame(img_frame)
-            frame.pack(side="left", padx=10, pady=10, fill="both", expand=True)
-
-            img_path = os.path.join(os.path.dirname(__file__), "assets", img_file)
-            img = Image.open(img_path).resize((200, 200))
-            photo = ImageTk.PhotoImage(img)
-
-            if not hasattr(self, 'detalle_images'):
-                self.detalle_images = []
-            self.detalle_images.append(photo)
-
-            ctk.CTkLabel(frame, image=photo, text="").pack(pady=5)
-            ctk.CTkRadioButton(
-                frame,
-                text=desc,
-                variable=self.extra_var,
-                value=detalle,
-                font=ctk.CTkFont(size=14)
-            ).pack(pady=5)
+            result = self.expert.get_result_info()
+            if result:
+                resumen = self.expert.get_diagnosis_summary()
+                self.update_resultados_tab(
+                    result["nombre"],
+                    result["confianza"],
+                    result["descripcion"],
+                    resumen,
+                    result["imagen"]
+                )
+                self.historial.append(f"{datetime.now()}: {result['nombre']} ({result['confianza']}%)")
+                self.update_historial_tab()
+                self.tabs.set("Resultados")
+            else:
+                messagebox.showwarning("Sin resultados", "❌ No se pudo identificar la especie con la información proporcionada.")
+        except Exception as e:
+            messagebox.showerror("Error del sistema experto", f"Ocurrió un error durante la inferencia:\n\n{e}")
 
     def _setup_resultados_tab(self):
         tab = self.tabs.tab("Resultados")
-        main_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        self.resultado_frame = ctk.CTkFrame(tab)
+        self.resultado_frame.pack(padx=10, pady=10)
 
-        self.img_result_frame = ctk.CTkFrame(main_frame, width=350, height=350)
-        self.img_result_frame.pack(side="left", padx=20, pady=20)
+    def update_resultados_tab(self, species, confianza, descripcion, resumen, img_path):
+        for widget in self.resultado_frame.winfo_children():
+            widget.destroy()
 
-        self.result_image_label = ctk.CTkLabel(
-            self.img_result_frame,
-            text="Imagen de resultado aquí",
-            font=ctk.CTkFont(size=14)
-        )
-        self.result_image_label.pack(expand=True)
+        if img_path and os.path.exists(img_path):
+            img = Image.open(img_path).resize((300, 200))
+            self.result_img = ImageTk.PhotoImage(img)
+            ctk.CTkLabel(self.resultado_frame, image=self.result_img, text="").pack(pady=10)
 
-        text_frame = ctk.CTkFrame(main_frame)
-        text_frame.pack(side="right", fill="both", expand=True, padx=20, pady=20)
-
-        self.result_label = ctk.CTkLabel(
-            text_frame,
-            text="Complete la identificación para ver el resultado.",
-            font=ctk.CTkFont(size=16),
-            wraplength=500
-        )
-        self.result_label.pack(pady=20)
-
-        ctk.CTkButton(
-            text_frame,
-            text="Guardar Resultado",
-            command=self.guardar_resultado,
-            font=ctk.CTkFont(size=14)
-        ).pack(pady=10)
+        texto = f"✅ Especie identificada: {species}\nConfianza: {confianza}%\n\n{descripcion}\n\n{resumen}"
+        ctk.CTkLabel(self.resultado_frame, text=texto, font=ctk.CTkFont(size=16), wraplength=800, justify="left").pack(pady=10)
 
     def _setup_historial_tab(self):
         tab = self.tabs.tab("Historial")
-        main_frame = ctk.CTkFrame(tab)
-        main_frame.pack(fill="both", expand=True, padx=10, pady=10)
-        self.scroll_frame = ctk.CTkScrollableFrame(main_frame)
-        self.scroll_frame.pack(fill="both", expand=True)
-
-        ctk.CTkLabel(
-            self.scroll_frame,
-            text="Historial de identificaciones aparecerá aquí",
-            font=ctk.CTkFont(size=16)
-        ).pack(pady=20)
-
-    def run_inference(self):
-        if not all([self.forma_var.get(), self.color_var.get(), self.oleaje_var.get()]):
-            messagebox.showerror("Error", "Por favor complete Forma, Color y Oleaje.")
-            return
-
-        self.expert.reset()
-        self.expert.declare(CoralCharacteristic(forma=self.forma_var.get()))
-        self.expert.declare(CoralCharacteristic(color=self.color_var.get()))
-        self.expert.declare(CoralCharacteristic(oleaje=self.oleaje_var.get()))
-
-        if self.extra_var.get():
-            self.expert.declare(CoralCharacteristic(estructura=self.extra_var.get()))
-            self.expert.declare(CoralCharacteristic(ramas=self.extra_var.get()))
-            self.expert.declare(CoralCharacteristic(superficie=self.extra_var.get()))
-            self.expert.declare(CoralCharacteristic(habitat=self.extra_var.get()))
-
-        self.expert.run()
-
-        if self.expert.identified_species:
-            species = self.expert.identified_species
-            info = self.expert.species_info[species]
-            img_file = f"{species.lower().replace(' ', '_')}.jpg"
-            img_path = os.path.join(os.path.dirname(__file__), "assets", "especies", img_file)
-            try:
-                img = Image.open(img_path).resize((350, 350))
-                photo = ImageTk.PhotoImage(img)
-                self.result_image = photo
-                self.result_image_label.configure(image=photo, text="")
-            except Exception as e:
-                self.result_image_label.configure(text="Imagen no disponible", image="")
-            self.result_label.configure(
-                text=f"Especie: {species}\n\nDescripción:\n{info}"
-            )
-            self.historial.append(f"{datetime.now()}: {species}")
-            self.update_historial_tab()
-            self.tabs.set("Resultados")
-        else:
-            messagebox.showinfo("Sin resultados", "No se pudo identificar la especie con la información proporcionada.")
-
-    def guardar_resultado(self):
-        if self.expert.identified_species:
-            filename = f"identificacion_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-            path = os.path.join(os.path.dirname(__file__), filename)
-            with open(path, "w") as f:
-                f.write(f"Especie: {self.expert.identified_species}\n")
-                f.write(f"Características:\n- Forma: {self.forma_var.get()}\n")
-                f.write(f"- Color: {self.color_var.get()}\n")
-                f.write(f"- Oleaje: {self.oleaje_var.get()}\n")
-                f.write(f"- Extra: {self.extra_var.get()}\n")
-            messagebox.showinfo("Guardado", f"Resultado guardado en: {path}")
-        else:
-            messagebox.showinfo("Sin resultados", "Identifique una especie antes de guardar.")
+        self.scroll_frame = ctk.CTkScrollableFrame(tab)
+        self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
     def update_historial_tab(self):
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
-        for entry in self.historial:
+        for entry in reversed(self.historial):
             ctk.CTkLabel(self.scroll_frame, text=entry, font=ctk.CTkFont(size=14)).pack(anchor="w", pady=2)
+
+    def _setup_acerca_tab(self):
+        tab = self.tabs.tab("Acerca de")
+        main_frame = ctk.CTkFrame(tab, fg_color="transparent")
+        main_frame.pack(expand=True, fill="both", padx=50, pady=50)
+
+        ctk.CTkLabel(
+            main_frame,
+            text="Acerca del Sistema Experto Millepora",
+            font=ctk.CTkFont(size=22, weight="bold"),
+            wraplength=700,
+            justify="center"
+        ).pack(pady=20)
+
+        ctk.CTkLabel(
+            main_frame,
+            text=(
+                "Este sistema experto identifica especies de corales del género *Millepora* "
+                "presentes en el Atlántico, utilizando características morfológicas y ambientales. "
+                "Su propósito es apoyar investigaciones y prácticas educativas."
+            ),
+            font=ctk.CTkFont(size=16),
+            wraplength=800,
+            justify="center"
+        ).pack(pady=20)
+
+        autores_texto = (
+            "Autores:\n"
+            "• Aaron Ortiz– Estudiante de Informatica\n"
+            "• Fabian Quijada– Estudiante de Informatica\n"
+            "• Eduardo Gonzales – Estudiante de Informatica\n\n"
+            "Colaboradores Expertos:\n"
+            "• Dr. Martin Rada– Especialista en Coralología\n"
+            "• Jose Morillo – Investigador Marino y Licenciado en Informatica\n\n"
+            "Agradecimientos:\n"
+            "Agradecemos a los docentes, asesores y especialistas que contribuyeron con su conocimiento "
+            "y apoyo para el desarrollo de este proyecto.\n"
+        )
+
+        ctk.CTkLabel(
+            main_frame,
+            text=autores_texto,
+            font=ctk.CTkFont(size=14),
+            wraplength=800,
+            justify="left"
+        ).pack(pady=20)
+
+        imagenes_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        imagenes_frame.pack(pady=10)
+
+        autores = [
+            ("aaron.jpg", "Aaron Ortiz"),
+            ("fabian.jpg", "Fabian Quijada"),
+            ("eduardo.jpg", "Eduardo Gonzales")
+        ]
+
+        self.autores_imgs = []
+
+        for img_file, nombre in autores:
+            path = os.path.join(os.path.dirname(__file__), "assets", "autores", img_file)
+            if os.path.exists(path):
+                img = Image.open(path).resize((100, 100))
+                photo = ImageTk.PhotoImage(img)
+                self.autores_imgs.append(photo)
+                box = ctk.CTkFrame(imagenes_frame)
+                box.pack(side="left", padx=10)
+                ctk.CTkLabel(box, image=photo, text="").pack()
+                ctk.CTkLabel(box, text=nombre, font=ctk.CTkFont(size=12)).pack()
+
 
 if __name__ == "__main__":
     app = CoralApp()
