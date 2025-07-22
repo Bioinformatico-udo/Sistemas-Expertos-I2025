@@ -602,7 +602,7 @@ def mostrar_descendente():
                 coincidencia.config(text=texto, bg="#32CD32")
             elif resultado ==3:
                 texto="POSIBLE COINCIDENCIA"
-                coincidencia.config(text=texto, bg="#F0E68C")
+                coincidencia.config(text=texto, bg="#FFD700")
             elif resultado ==2:
                 texto="NO SE PUEDE LLEGAR A UNA CONCLUSION"
                 coincidencia.config(text=texto, bg="#FF7F50")
