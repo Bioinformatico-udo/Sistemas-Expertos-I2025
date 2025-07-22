@@ -11,14 +11,16 @@ class MainApplication(tk.Tk):
         self.geometry("800x600")
         self.state("zoomed") # Configurar para pantalla completa
         self.configure(bg='#f0f8ff')
-        
-        icon_path = "ico.png" 
+
+        self.application_path = os.path.dirname(os.path.abspath(__file__))
+
+        self.icon_path = os.path.join(self.application_path, '../ico.png')
         try:
-            icon_image = Image.open(icon_path) 
+            icon_image = Image.open(self.icon_path) 
             self.icon_photo = ImageTk.PhotoImage(icon_image)
             self.iconphoto(True, self.icon_photo)
         except FileNotFoundError:
-            print(f"Advertencia: El archivo de icono '{icon_path}' no se encontró.")
+            print(f"Advertencia: El archivo de icono '{self.icon_path}' no se encontró.")
         except Exception as e:
             print(f"Error al cargar el icono de la ventana: {e}")
 
@@ -315,11 +317,13 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
         # Limpiar imagen previa
         self.clear_image()
-        
+
+        self.image_relative_path = os.path.dirname(os.path.abspath(__file__))
+        self.icon_path = os.path.join(self.image_relative_path, f"../assets/img/{species.lower().replace(' ', '_')}.png")
         # Intentar mostrar imagen si está disponible
         try:
             # En un entorno real, aquí cargarías la imagen desde un archivo
-            image = Image.open(f"./assets/img/{species.lower().replace(' ', '_')}.png")
+            image = Image.open(self.icon_path)
             image = image.resize((250, 250), Image.LANCZOS)
             self.photo = ImageTk.PhotoImage(image)
             
@@ -544,10 +548,11 @@ class AcercaDeFrame(ttk.Frame):
         self.canvas.bind('<Enter>', self._bind_mouse_wheel)
         self.canvas.bind('<Leave>', self._unbind_mouse_wheel)
 
-        # Logo (simulado)
-        logo_path = "ico.png"
+        self.relative_logo_path = os.path.dirname(os.path.abspath(__file__))
+        self.logo_path = os.path.join(self.relative_logo_path, '../ico.png')
+
         try:
-            original_image = Image.open(logo_path)
+            original_image = Image.open(self.logo_path)
             desired_size = (150, 150)
             
             original_width, original_height = original_image.size
@@ -562,7 +567,7 @@ class AcercaDeFrame(ttk.Frame):
             logo_label.pack(pady=10)
             
         except FileNotFoundError:
-            print(f"Error: La imagen '{logo_path}' no se encontró. Asegúrate de que esté en la ruta correcta.")
+            print(f"Error: La imagen '{self.logo_path}' no se encontró. Asegúrate de que esté en la ruta correcta.")
             placeholder_canvas = tk.Canvas(self.scrollable_frame, width=150, height=150, bg='white', highlightthickness=0)
             placeholder_canvas.create_text(75, 75, text="LOGO NO ENCONTRADO", font=('Arial', 10), fill='red')
             placeholder_canvas.pack(pady=10)
