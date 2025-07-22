@@ -14,8 +14,7 @@ class MainApplication(tk.Tk):
         
         icon_path = "ico.png" 
         try:
-            icon_image = Image.open(icon_path)
-            # icon_image = icon_image.resize((64, 64), Image.Resampling.LANCZOS) 
+            icon_image = Image.open(icon_path) 
             self.icon_photo = ImageTk.PhotoImage(icon_image)
             self.iconphoto(True, self.icon_photo)
         except FileNotFoundError:
