@@ -12,6 +12,17 @@ class MainApplication(tk.Tk):
         self.state("zoomed") # Configurar para pantalla completa
         self.configure(bg='#f0f8ff')
         
+        icon_path = "ico.png" 
+        try:
+            icon_image = Image.open(icon_path)
+            # icon_image = icon_image.resize((64, 64), Image.Resampling.LANCZOS) 
+            self.icon_photo = ImageTk.PhotoImage(icon_image)
+            self.iconphoto(True, self.icon_photo)
+        except FileNotFoundError:
+            print(f"Advertencia: El archivo de icono '{icon_path}' no se encontró.")
+        except Exception as e:
+            print(f"Error al cargar el icono de la ventana: {e}")
+
         # Configurar el estilo
         self.style = ttk.Style()
         self.style.configure('TFrame', background='#f0f8ff')
@@ -86,6 +97,7 @@ class MainApplication(tk.Tk):
     def show_acerca_de(self):
         self.hide_all_frames()
         self.acerca_de_frame.pack(fill='both', expand=True)
+        self.acerca_de_frame.after(50, self.acerca_de_frame.trigger_initial_scroll_update)
     
     def hide_all_frames(self):
         for frame in [self.main_menu_frame, self.identificar_alga_frame, 
@@ -475,7 +487,7 @@ class ManualUsuarioFrame(ttk.Frame):
            - Consulte imágenes de referencia cuando esté disponible
            - Si no está seguro de una característica, elija la opción más probable
         
-        Para más información, consulte nuestra guía completa en línea.\n\n\n\nEn desarrollo...
+        Para más información, consulte nuestra guía completa en línea.
         """
         
         manual_label = tk.Label(content_frame, text=manual_text, 
@@ -517,16 +529,53 @@ class AcercaDeFrame(ttk.Frame):
                              font=('Arial', 16, 'bold'), 
                              bg='#00796b', fg='white', pady=10)
         title_label.pack(fill='x')
-        
-        # Contenido
-        content_frame = ttk.Frame(self)
-        content_frame.pack(fill='both', expand=True, padx=50, pady=30)
-        
+
+        outer_content_frame = ttk.Frame(self, style='TFrame')
+        outer_content_frame.pack(fill='both', expand=True, padx=50, pady=30)
+
+        self.canvas = tk.Canvas(outer_content_frame, bg='#f0f8ff', highlightthickness=0)
+        self.scrollbar = ttk.Scrollbar(outer_content_frame, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas, style='TFrame')
+
+        self.canvas_window_id = self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        self.canvas.bind("<Configure>", self._on_frame_configure)
+        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
+        self.canvas.bind('<Enter>', self._bind_mouse_wheel)
+        self.canvas.bind('<Leave>', self._unbind_mouse_wheel)
+
         # Logo (simulado)
-        logo_canvas = tk.Canvas(content_frame, width=150, height=150, bg='white', highlightthickness=0)
-        logo_canvas.create_oval(10, 10, 140, 140, fill='#4db6ac', outline='#00796b', width=2)
-        logo_canvas.create_text(75, 75, text="ALGAS", font=('Arial', 14, 'bold'), fill='white')
-        logo_canvas.pack(pady=10)
+        logo_path = "ico.png"
+        try:
+            original_image = Image.open(logo_path)
+            desired_size = (150, 150)
+            
+            original_width, original_height = original_image.size
+            ratio = min(desired_size[0] / original_width, desired_size[1] / original_height)
+            new_width = int(original_width * ratio)
+            new_height = int(original_height * ratio)
+
+            resized_image = original_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            self.logo_photo = ImageTk.PhotoImage(resized_image)
+
+            logo_label = tk.Label(self.scrollable_frame, image=self.logo_photo, bg='#f0f8ff')
+            logo_label.pack(pady=10)
+            
+        except FileNotFoundError:
+            print(f"Error: La imagen '{logo_path}' no se encontró. Asegúrate de que esté en la ruta correcta.")
+            placeholder_canvas = tk.Canvas(self.scrollable_frame, width=150, height=150, bg='white', highlightthickness=0)
+            placeholder_canvas.create_text(75, 75, text="LOGO NO ENCONTRADO", font=('Arial', 10), fill='red')
+            placeholder_canvas.pack(pady=10)
+        except Exception as e:
+            print(f"Ocurrió un error al cargar o procesar la imagen: {e}")
+            placeholder_canvas = tk.Canvas(self.scrollable_frame, width=150, height=150, bg='white', highlightthickness=0)
+            placeholder_canvas.create_text(75, 75, text="ERROR DE IMAGEN", font=('Arial', 10), fill='red')
+            placeholder_canvas.pack(pady=10)
         
         # Información de la aplicación
         app_info = """
@@ -543,14 +592,14 @@ class AcercaDeFrame(ttk.Frame):
         Creditos a:
         """
         
-        info_label = tk.Label(content_frame, text=app_info, 
-                            font=('Arial', 11), justify='center',
-                            bg='#f0f8ff')
-        info_label.pack(pady=10)
+        self.info_label = tk.Label(self.scrollable_frame, text=app_info, 
+                                 font=('Arial', 11), justify='center',
+                                 bg='#f0f8ff')
+        self.info_label.pack(pady=10)
         
         # Créditos
-        credits_frame = ttk.Frame(content_frame)
-        credits_frame.pack(pady=10)
+        self.credits_frame = ttk.Frame(self.scrollable_frame, style='TFrame')
+        self.credits_frame.pack(pady=10)
         
         credits = [
             "Br. Khristian Flores - Desarrollo de Software",
@@ -560,9 +609,43 @@ class AcercaDeFrame(ttk.Frame):
         ]
         
         for credit in credits:
-            lbl = tk.Label(credits_frame, text=credit, font=('Arial', 10), bg='#f0f8ff')
+            lbl = tk.Label(self.credits_frame, text=credit, font=('Arial', 10), bg='#f0f8ff')
             lbl.pack(pady=2)
+        
+    def trigger_initial_scroll_update(self):
+        self.update_idletasks() 
+        self._on_frame_configure() 
 
+    def _on_frame_configure(self, event=None):
+        canvas_width = self.canvas.winfo_width()
+        if canvas_width > 0:
+            self.canvas.itemconfig(self.canvas_window_id, width=canvas_width)
+            if self.info_label.winfo_exists():
+                self.info_label.config(wraplength=max(100, canvas_width - 40))
+
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        
+    def _on_mouse_wheel(self, event):
+        if event.num == 4:
+            self.canvas.yview_scroll(-1, "unit")
+        elif event.num == 5:
+            self.canvas.yview_scroll(1, "unit")
+        else:
+            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def _bind_mouse_wheel(self, event):
+        self.canvas.unbind_all("<MouseWheel>") 
+        self.canvas.unbind_all("<Button-4>")
+        self.canvas.unbind_all("<Button-5>")
+
+        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+        self.canvas.bind_all("<Button-4>", self._on_mouse_wheel)
+        self.canvas.bind_all("<Button-5>", self._on_mouse_wheel)
+
+    def _unbind_mouse_wheel(self, event):
+        self.canvas.unbind_all("<MouseWheel>")
+        self.canvas.unbind_all("<Button-4>")
+        self.canvas.unbind_all("<Button-5>")
 
 if __name__ == "__main__":
     app = MainApplication()
