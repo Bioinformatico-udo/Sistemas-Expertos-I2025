@@ -307,6 +307,7 @@ class IdentificarAlgaFrame(ttk.Frame):
             self.image_label.destroy()
             self.image_label = None
             self.photo = None
+            self.name_label.destroy()
     
     def show_result(self, species):
         self.result_shown = True # Bandera para indicar que un resultado ya ha sido mostrado
@@ -319,7 +320,6 @@ class IdentificarAlgaFrame(ttk.Frame):
         
         # Intentar mostrar imagen si está disponible
         try:
-            # En un entorno real, aquí cargarías la imagen desde un archivo
             image = Image.open(f"./assets/img/{species.lower().replace(' ', '_')}.png")
             image = image.resize((250, 250), Image.LANCZOS)
             self.photo = ImageTk.PhotoImage(image)
@@ -335,11 +335,18 @@ class IdentificarAlgaFrame(ttk.Frame):
             print(f"No se pudo cargar la imagen: {e}")
     
     def restart(self):
+        # Resetear la aplicación al estado inicial
         self.current_step = 1
-        self.result_shown = False
+        
+        # Eliminar atributo de resultado
+        if hasattr(self, 'result_shown'):
+            delattr(self, 'result_shown')
+        
+        # Limpiar imagen
         self.clear_image()
+        
+        # Mostrar primera pregunta
         self.show_question()
-
 
 class VerificarAlgaFrame(ttk.Frame):
     def __init__(self, parent):
