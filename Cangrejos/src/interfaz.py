@@ -599,16 +599,16 @@ def mostrar_descendente():
             resultado=calcular_resultado(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
             if resultado == 4:
                 texto="COINCIDENCIA COMPLETA"
-                coincidencia.config(text=texto, bg="#32CD32")
+                coincidencia.config(text=texto, bg="#32CD32", fg="black")
             elif resultado ==3:
                 texto="POSIBLE COINCIDENCIA"
-                coincidencia.config(text=texto, bg="#FFD700")
+                coincidencia.config(text=texto, bg="#FFD700", fg="black")
             elif resultado ==2:
                 texto="NO SE PUEDE LLEGAR A UNA CONCLUSION"
-                coincidencia.config(text=texto, bg="#FF7F50")
+                coincidencia.config(text=texto, bg="#FF7F50", fg="black")
             elif resultado ==1:
                 texto= "NO HAY SUFICIENTES DATOS PARA LLEGAR A UNA CONCLUSION"
-                coincidencia.config(text=texto, bg="#FA8072")
+                coincidencia.config(text=texto, bg="#FA8072", fg="black")
             elif resultado ==0:
                 texto="NO HAY COINCIDENCIA"
                 coincidencia.config(text=texto, bg="#696969", fg="white")
