@@ -355,7 +355,7 @@ class VerificarAlgaFrame(ttk.Frame):
         back_button = ttk.Button(self, text="Volver al Menú", 
                                command=self.parent.show_main_menu)
         back_button.pack(anchor='nw', padx=10, pady=10)
-         
+        
         # Título
         title_label = tk.Label(self, text="Verificar Alga", 
                              font=('Arial', 16, 'bold'), 
