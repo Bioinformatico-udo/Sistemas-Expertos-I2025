@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import webbrowser
+import os
 
 class MainApplication(tk.Tk):
     def __init__(self):
@@ -482,11 +483,23 @@ class ManualUsuarioFrame(ttk.Frame):
                               bg='#f0f8ff', anchor='w')
         manual_label.pack(fill='both', padx=20, pady=10)
         
-        # Botón para abrir guía en línea
+        self.relative_pdf_path  = "../docs/Sistema-Experto-para-Algas-Marinas.pdf"
         online_btn = ttk.Button(content_frame, text="Abrir Guía Completa en Línea",
-                              command=lambda: webbrowser.open("https://ejemplo.com/manual-algas.pdf"))
+                                command=self.open_pdf)
         online_btn.pack(pady=20)
 
+    def open_pdf(self):
+        script_dir = os.path.dirname(__file__)
+        pdf_full_path = os.path.join(script_dir, self.relative_pdf_path)
+
+        if os.path.exists(pdf_full_path):
+            pdf_url = "file:///" + os.path.normpath(pdf_full_path).replace("\\", "/")
+            webbrowser.open_new(pdf_url)
+        else:
+            messagebox.showerror("Error", 
+                                f"El archivo PDF '{self.relative_pdf_path}' no se encontró.\n"
+                                f"Asegúrese de que la ruta sea correcta desde la carpeta del script."
+                                f"\nRuta buscada: {pdf_full_path}")
 
 class AcercaDeFrame(ttk.Frame):
     def __init__(self, parent):
@@ -541,7 +554,7 @@ class AcercaDeFrame(ttk.Frame):
         
         credits = [
             "Br. Khristian Flores - Desarrollo de Software",
-            "Br. Duberth Farias - Desarrollo de Software",
+            "Br. Duberth Farías - Desarrollo de Software",
             "Lic. José Morillo - Director de Proyecto",
             "Lic. Yuraima García - Validación Experta"
         ]
