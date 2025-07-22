@@ -109,56 +109,56 @@ lista_cangrejos={
         "property2":"* Región frontal tridentada (lóbulo medio triangular, al menos 2 veces más ancho que los laterales)",
         "property3":"* Artejo basal de la anténula con cresta transversal aserrada en la superficie expuesta",
         "property4":"* Tercer maxilípedo con surco longitudinal submarginal en el isquio",
-        "imagen": resource_path("/assets/images/tridentatus.png")
+        "imagen": resource_path("assets/images/tridentatus.png")
     },
     "Petrolisthes_Tonsorius":{
         "property1":"* Caparazón subcuadrado (tan largo como ancho) casi liso, con pliegues cortos en la región posterolateral",
         "property2":"* Región frontal con surco medio profundo que se extiende hasta los lóbulos protogástricos",
         "property3":"* Flagelo de las antenas más largo que el caparazón, con setas escasas proximalmente",
         "property4":"* Carpo de los quelípedos con gránulos diagonales en el margen extensor",
-        "imagen": resource_path("/assets/images/tonsorius.png")
+        "imagen": resource_path("assets/images/tonsorius.png")
     },
     "Petrolisthes_Jugosus":{
         "property1":"* Caparazón subcircular (más ancho que largo en hembras, más largo en machos)",
         "property2":"* Telson con 5 placas (vs. 7 en otras especies)",
         "property3":"* Región frontal trilobulada con surco medio profundo",
         "property4":"* Carpo de los quelípedos con margen extensor aserrado (gránulos en forma de espínulas)",
-        "imagen": resource_path("/assets/images/jugosus.png")
+        "imagen": resource_path("assets/images/jugosus.png")
     },
     "Petrolisthes_Puelitus":{
         "property1":"* Caparazón subcircular con gránulos pequeños y surcos transversales",
         "property2":"* Flagelo de las antenas desarmado (sin setas) y más largo que el caparazón",
         "property3":"* Propodio de las patas caminadoras con 4 espinas móviles en el margen flexor (vs. 5 en otras especies)",
         "property4":"* Tercer maxilípedo con surco longitudinal en el isquio y 4 surcos en el carpo",
-        "imagen": resource_path("/assets/images/puelitus.png")
+        "imagen": resource_path("assets/images/puelitus.png")
     },
     "Petrolisthes_Magdalenensis":{
         "property1":"* Caparazón subcuadrado con superficie irregular y pliegues dorsolaterales",
         "property2":"* Carpo de los quelípedos con 2–4 dientes triangulares en el margen flexor",
         "property3":"* Primer par de patas caminadoras con 5 espinas en el propodio; otros pares con 4",
         "property4":"* Región frontal ligeramente pubescente (setas aisladas)",
-        "imagen": resource_path("/assets/images/lewisi.png")
+        "imagen": resource_path("assets/images/lewisi.png")
     },
     "Petrolisthes_Armatus":{
         "property1":"* Caparazón ligeramente más largo que ancho, con pliegues posterolaterales",
         "property2":"* Espina epibranquial presente (ausente en otras especies)",
         "property3":"* Carpo de los quelípedos con 3 dientes en el margen flexor y gránulos en el extensor",
         "property4":"* Mero de las patas caminadoras con 2–6 espinas en el margen extensor (vs. 0–4 en otras)",
-        "imagen": resource_path("/assets/images/armatus.png")
+        "imagen": resource_path("assets/images/armatus.png")
     },
     "Petrolisthes_Gallatinus":{
         "property1":"* Caparazón más largo que ancho, con pliegues transversales setosos",
         "property2":"* Región frontal con depresión media en la superficie dorsal",
         "property3":"* Espina supraorbital presente (ausente en otras especies)",
         "property4":"* Mero de los quelípedos con estrías transversales setosas",
-        "imagen": resource_path("/assets/images/gallatinus.png")
+        "imagen": resource_path("assets/images/gallatinus.png")
     },
     "Petrolisthes_Marginatus":{
         "property1":"* Caparazón casi liso (sin gránulos pronunciados), con surcos poco profundos",
         "property2":"* Espina exorbital presente (formando un ángulo orbital externo aserrado)",
         "property3":"* Carpo de los quelípedos con tubérculos espiniformes en el margen extensor",
         "property4":"* Tercer maxilípedo con estrías y gránulos en isquio, mero, carpo y propodio",
-        "imagen": resource_path("/assets/images/marginatus.png")
+        "imagen": resource_path("assets/images/marginatus.png")
     },
 }
 
@@ -178,20 +178,27 @@ ventana.resizable(False, False)
 panel_principal=Frame(ventana,width=200,height=600, bg="white")
 panel_principal.pack(fill=BOTH, expand=True)
 
-#Control de los radio button
+#Control de los radio button del ascendente
 opcion_elegida=StringVar()
 opcion_elegida.set("opcion1")
+#control de los radio buttno del descendente
+primera_pregunta=StringVar()
+primera_pregunta.set(0)
+segunda_pregunta=StringVar()
+segunda_pregunta.set(0)
+tercera_pregunta=StringVar()
+tercera_pregunta.set(0)
+cuarta_pregunta=StringVar()
+cuarta_pregunta.set(0)
 
 # ================= FUNCIONES =================
 
-#GabrielRosas
 def regresar_menu():
    limpiar_panel_principal()
    global indice_pregunta
    indice_pregunta=0
    mostrar_panel_principal()
 
-#GabrielRosas
 def registrar_respuesta():
     global indice_pregunta
     if indice_pregunta==0:# ¿En que ambiente habita?
@@ -321,7 +328,6 @@ def inicializar_valores():
     indice_pregunta=0
     opcion_elegida.set("opcion0")
 
-#GabrielRosas
 def mostrar_resultado():
     limpiar_panel_principal()
     print("Mostrar Resultado")
@@ -355,34 +361,31 @@ def mostrar_resultado():
     #Panel para mostrar los datos del cangrejo
     panel_resultado=Frame(panel,width=600, height=400, bg="white")
     panel_resultado.pack(padx=50,pady=10,fill=BOTH,expand=True)
-    titulo_panel_descripcion=Label(panel_resultado,width=40, text="Informacion", font=("Arial",15,"bold"))
+    titulo_panel_descripcion=Label(panel_resultado,width=100, text="Informacion", font=("Arial",15,"bold"))
     titulo_panel_descripcion.pack()
-    titulo_nombre_especie=Label(panel_resultado,width=40, text="Nombre Especie", font=("Arial",12,"bold"))
-    titulo_nombre_especie.pack(pady=5, expand=False)
+    titulo_nombre_especie=Label(panel_resultado,width=1000, text="Nombre Especie", font=("Arial",12,"bold"))
+    titulo_nombre_especie.pack(expand=False)
     nombre_especie=Label(panel_resultado,width=40, text="", bg="white", font=("Arial",15,"bold"))
     nombre_especie.pack(pady=5, expand=False)
-    titulo_despcripcion_especie=Label(panel_resultado,width=40, text="Description", font=("Arial",12,"bold"))
-    titulo_despcripcion_especie.pack(pady=5, expand=False)
+    titulo_despcripcion_especie=Label(panel_resultado,width=100, text="Description", font=("Arial",12,"bold"))
+    titulo_despcripcion_especie.pack(expand=False)
     panel_descripcion=Frame(panel_resultado)
     panel_descripcion.pack()
-    titulo_representacion=Label(panel_resultado,width=40, text="Representacion visual", font=("Arial",12,"bold"))
-    titulo_representacion.pack(pady=5, expand=False)
+    titulo_representacion=Label(panel_resultado,width=100, text="Representacion visual", font=("Arial",12,"bold"))
+    titulo_representacion.pack(expand=False)
     panel_representacion=Frame(panel_resultado)
     panel_representacion.pack()
     predecir_especie()
 
-#JesusMarichal
 def salir_programa():
     ventana.destroy()
 
-#JesusMarichal
 def mostrar_paginaweb():
     webbrowser.open("https://jesusmarichal.github.io/Landingpage_Crustaceos/")
 
 def mostrar_paginaweb_udone():
     webbrowser.open("https://es.wikipedia.org/wiki/Universidad_de_Oriente_N%C3%BAcleo_de_Nueva_Esparta")
 
-#GabrielRosas
 def limpiar_panel_principal():
     for widget in panel_principal.winfo_children():
         widget.destroy()
@@ -407,7 +410,6 @@ def mostrar_glosario():
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
-#GabrielRosas
 def mostrar_ascendente():
     limpiar_panel_principal()
     print(len(respuesta_vector))
@@ -478,22 +480,22 @@ def mostrar_ascendente():
     panel=Frame(panel_principal,width=800,height=600, bg="#6495ED")
     panel.pack(padx=0,pady=0,fill=BOTH,expand=True)
 
-    titulo=Label(panel, text="Identificacion de Especies", font=("Arial",18,"bold"))
+    titulo=Label(panel, text="Identificacion de Especies", bg="#6495ED",font=("Arial",18,"bold"))
     titulo.pack(padx=0, pady=5)
     preguntas_completas="Pregunta Completadas:",indice_pregunta,"/",max_preguntas,
-    cantidad_preguntas=Label(panel, text=preguntas_completas, font=("Arial",12,"bold"))
+    cantidad_preguntas=Label(panel, text=preguntas_completas, bg="#6495ED",font=("Arial",12,"bold"))
     cantidad_preguntas.pack(padx=0, pady=5)
 
     panel_preguntas=Frame(panel, bg="#E6E6FA",width=600,height=400)
-    panel_preguntas.pack(padx=10, pady=5,fill=BOTH,expand=True)
+    panel_preguntas.pack(padx=10, pady=0,fill=BOTH,expand=True)
     titulo_preguntas=Label(panel_preguntas,text="", font=("Arial",12,"bold"))
     titulo_preguntas.pack()
 
-    panel_respuestas=Frame(panel_preguntas, bg="#FFE4C4", width=300,height=300)
+    panel_respuestas=Frame(panel_preguntas, bg="#B0C4DE", width=300,height=300)
     panel_respuestas.pack(side=TOP,fill=BOTH, expand=True)
     mostrar_pregunta_respuestas()
 
-    panel_botones=Frame(panel_preguntas, bg="#FFE4C4", width=600,height=50)
+    panel_botones=Frame(panel_preguntas, bg="#B0C4DE", width=600,height=50)
     panel_botones.pack(side=BOTTOM, padx=0, pady=0, fill=X, expand=False)
     boton_anterior=Button(panel_botones, text="Anterior", command=pregunta_anterior, bg="#F0E68C", font=("Arial",12,"bold"))
     boton_anterior.pack(padx=50, pady=2, side=LEFT,fill=BOTH,expand=True)
@@ -503,7 +505,6 @@ def mostrar_ascendente():
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
-#GabrielRosas
 def mostrar_descendente():
 
     def limpiar_panel_mostrar_resultado():
@@ -511,17 +512,41 @@ def mostrar_descendente():
             widget.destroy()
 
     def mostrar_datos(nombre):
+        
+        print(nombre)
         for i in range(1,5):
             propiedad="property"+str(i)
-            print(nombre)
             print(lista_cangrejos[nombre][propiedad])
+            print("SI")
+            print("NO")
+            print("NO ESTOY SEGURO")
             resultado=Label(panel_mostrar_resultado,text=lista_cangrejos[nombre][propiedad], bg="white", font=("Arial",10,"bold"))
-            resultado.pack(padx=0,pady=0,fill=BOTH, expand=True)
+            resultado.pack(padx=0,pady=0,fill=None, expand=False)
+            panel_opciones=Frame(panel_mostrar_resultado, bg="gray")
+            panel_opciones.pack(padx=5,pady=0)
+            if i==1:
+                opcion_elegida=primera_pregunta
+            elif i==2:
+                opcion_elegida=segunda_pregunta
+            elif i==3:
+                opcion_elegida=tercera_pregunta
+            elif i==4:
+                opcion_elegida=cuarta_pregunta
+            
+            radio=Radiobutton(panel_opciones,variable=opcion_elegida, value=1 , text="SI")
+            radio2=Radiobutton(panel_opciones,variable=opcion_elegida, value=2 , text="NO")
+            radio3=Radiobutton(panel_opciones,variable=opcion_elegida, value=3 , text="TAL VEZ")
+            radio.grid(padx=5, pady=0, row=0,column=0)
+            radio2.grid(padx=5, pady=0, row=0,column=1)
+            radio3.grid(padx=5, pady=0, row=0,column=2)
+
+        '''
         imagen=PhotoImage(file=lista_cangrejos[nombre]["imagen"])
         imagen_reduccion=imagen.subsample(10,10)
         presentar_image=Label(panel_mostrar_resultado, image=imagen_reduccion)
         presentar_image.pack(padx=0,pady=5)
         presentar_image.image=imagen_reduccion
+        '''
 
     def buscar_especie():
         encontrado=""
@@ -567,15 +592,17 @@ def mostrar_descendente():
 
     panel_resultado=Frame(panel_verificacion, bg="white",width=600,height=300)
     panel_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
-    titulo_resultado=Label(panel_resultado,text="Resultados de la especie identificada:", font=("Arial",12,"bold"))
+    titulo_resultado=Label(panel_resultado,text="Resultados de la especie identificada:", width=100, font=("Arial",12,"bold"))
     titulo_resultado.pack(padx=0, pady=5, fill=NONE,expand=False)
     panel_mostrar_resultado=Frame(panel_resultado, bg="white")
     panel_mostrar_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
 
+    boton_salir=Button(panel_verificacion, text="Verificar", command=regresar_menu, bg="#228B22", font=("Arial",12,"bold"))
+    boton_salir.pack(side=BOTTOM ,padx=100, pady=10)
+
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
-#GabrielRosas
 def mostrar_panel_principal():
     panel_menu=Frame(panel_principal,width=200,height=600, bg="#B0C4DE")
     panel_menu.pack(side=LEFT,fill=Y, expand=True)
@@ -610,15 +637,10 @@ def mostrar_panel_principal():
     boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
     boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton4=Button(panel_menu, text="CERRAR APLICACAION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
+    boton4=Button(panel_menu, text="CERRAR APLICACION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
     boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
 # ================ Programa principal ==================
 
 mostrar_panel_principal()
-
-'''
-for termino, definicion in glosario.items():
-    print(f"**{termino}**: {definicion} \n"+ "-"*50)
-'''
 ventana.mainloop()
