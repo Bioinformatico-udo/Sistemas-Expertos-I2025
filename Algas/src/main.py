@@ -296,12 +296,11 @@ class IdentificarAlgaFrame(ttk.Frame):
             self.photo = None
     
     def show_result(self, species):
-        self.result_shown = True
+        self.result_shown = True # Bandera para indicar que un resultado ya ha sido mostrado
         self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}")
-        self.option_a.pack_forget()
+        self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
-        self.restart_button.pack(pady=20)
-        
+        self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
         # Limpiar imagen previa
         self.clear_image()
         
