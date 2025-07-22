@@ -11,15 +11,16 @@ class MainApplication(tk.Tk):
         self.geometry("800x600")
         self.state("zoomed") # Configurar para pantalla completa
         self.configure(bg='#f0f8ff')
-        
-        icon_path = "ico.png" 
+
+        self.application_path = os.path.dirname(os.path.abspath(__file__))
+
+        self.icon_path = os.path.join(self.application_path, '../ico.png')
         try:
-            icon_image = Image.open(icon_path)
-            # icon_image = icon_image.resize((64, 64), Image.Resampling.LANCZOS) 
+            icon_image = Image.open(self.icon_path) 
             self.icon_photo = ImageTk.PhotoImage(icon_image)
             self.iconphoto(True, self.icon_photo)
         except FileNotFoundError:
-            print(f"Advertencia: El archivo de icono '{icon_path}' no se encontró.")
+            print(f"Advertencia: El archivo de icono '{self.icon_path}' no se encontró.")
         except Exception as e:
             print(f"Error al cargar el icono de la ventana: {e}")
 
@@ -149,11 +150,11 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.button_frame = ttk.Frame(self.question_frame)
         self.button_frame.pack(pady=20)
         
-        self.option_a = ttk.Button(self.button_frame, text="", width=30,
+        self.option_a = ttk.Button(self.button_frame, text="", width=75,
                                   command=lambda: self.select_option('a'))
         self.option_a.pack(side='left', padx=10)
         
-        self.option_b = ttk.Button(self.button_frame, text="", width=30,
+        self.option_b = ttk.Button(self.button_frame, text="", width=75,
                                   command=lambda: self.select_option('b'))
         self.option_b.pack(side='left', padx=10)
         
@@ -317,10 +318,13 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
         # Limpiar imagen previa
         self.clear_image()
-        
+
+        self.image_relative_path = os.path.dirname(os.path.abspath(__file__))
+        self.icon_path = os.path.join(self.image_relative_path, f"../assets/img/{species.lower().replace(' ', '_')}.png")
         # Intentar mostrar imagen si está disponible
         try:
-            image = Image.open(f"./assets/img/{species.lower().replace(' ', '_')}.png")
+            # En un entorno real, aquí cargarías la imagen desde un archivo
+            image = Image.open(self.icon_path)
             image = image.resize((250, 250), Image.LANCZOS)
             self.photo = ImageTk.PhotoImage(image)
             
@@ -408,7 +412,7 @@ class VerificarAlgaFrame(ttk.Frame):
     def verify_alga(self):
         messagebox.showinfo("Verificación", 
                           "La verificación de algas está en desarrollo.\n"
-                          "Próximamente podrá verificar sus muestras con nuestra base de datos.")
+                          "Próximamente podrá verificar sus muestras con nuestro sistema.")
 
 class GlosarioTerminosFrame(ttk.Frame):
     def __init__(self, parent):
@@ -422,7 +426,7 @@ class GlosarioTerminosFrame(ttk.Frame):
         back_button.pack(anchor='nw', padx=10, pady=10)
         
         # Título
-        title_label = tk.Label(self, text="Manual de Usuario", 
+        title_label = tk.Label(self, text="Glosario de Terminos", 
                              font=('Arial', 16, 'bold'), 
                              bg='#00796b', fg='white', pady=10)
         title_label.pack(fill='x')
@@ -433,15 +437,13 @@ class GlosarioTerminosFrame(ttk.Frame):
         
         # Texto del manual
         manual_text = """
-        Glosario para el uso del Sistema Experto para Algas Marinas
+        Glosario para el uso del Sistema Experto de Algas Marinas\n\n
         
-        Términos:
-           - Rizomas: Tallos subterráneos o rastreros
-           - Frondes erectos: Partes verticales de la planta
-           - Ramillas: Pequeñas ramas o divisiones
+        Términos:\n
+           - Rizomas: Tallos subterráneos o rastreros\n
+           - Frondes erectos: Partes verticales de la planta\n
+           - Ramillas: Pequeñas ramas o divisiones\n
            - Verticiladas: Disposición en espiral o en círculos
-        
-        Para más información, consulte nuestra guía completa en línea.\n\n\n\nEn desarrollo...
         """
         
         manual_label = tk.Label(content_frame, text=manual_text, 
@@ -490,7 +492,7 @@ class ManualUsuarioFrame(ttk.Frame):
            - Consulte imágenes de referencia cuando esté disponible
            - Si no está seguro de una característica, elija la opción más probable
         
-        Para más información, consulte nuestra guía completa en línea.
+        Para más información, consulte nuestra guía completa en PDF.
         """
         
         manual_label = tk.Label(content_frame, text=manual_text, 
@@ -499,7 +501,7 @@ class ManualUsuarioFrame(ttk.Frame):
         manual_label.pack(fill='both', padx=20, pady=10)
         
         self.relative_pdf_path  = "../docs/Sistema-Experto-para-Algas-Marinas.pdf"
-        online_btn = ttk.Button(content_frame, text="Abrir Guía Completa en Línea",
+        online_btn = ttk.Button(content_frame, text="Abrir Guía Completa en PDF",
                                 command=self.open_pdf)
         online_btn.pack(pady=20)
 
@@ -552,10 +554,11 @@ class AcercaDeFrame(ttk.Frame):
         self.canvas.bind('<Enter>', self._bind_mouse_wheel)
         self.canvas.bind('<Leave>', self._unbind_mouse_wheel)
 
-        # Logo (simulado)
-        logo_path = "ico.png"
+        self.relative_logo_path = os.path.dirname(os.path.abspath(__file__))
+        self.logo_path = os.path.join(self.relative_logo_path, '../ico.png')
+
         try:
-            original_image = Image.open(logo_path)
+            original_image = Image.open(self.logo_path)
             desired_size = (150, 150)
             
             original_width, original_height = original_image.size
@@ -570,7 +573,7 @@ class AcercaDeFrame(ttk.Frame):
             logo_label.pack(pady=10)
             
         except FileNotFoundError:
-            print(f"Error: La imagen '{logo_path}' no se encontró. Asegúrate de que esté en la ruta correcta.")
+            print(f"Error: La imagen '{self.logo_path}' no se encontró. Asegúrate de que esté en la ruta correcta.")
             placeholder_canvas = tk.Canvas(self.scrollable_frame, width=150, height=150, bg='white', highlightthickness=0)
             placeholder_canvas.create_text(75, 75, text="LOGO NO ENCONTRADO", font=('Arial', 10), fill='red')
             placeholder_canvas.pack(pady=10)
