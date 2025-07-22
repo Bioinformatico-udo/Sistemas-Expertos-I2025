@@ -178,9 +178,18 @@ ventana.resizable(False, False)
 panel_principal=Frame(ventana,width=200,height=600, bg="white")
 panel_principal.pack(fill=BOTH, expand=True)
 
-#Control de los radio button
+#Control de los radio button del ascendente
 opcion_elegida=StringVar()
 opcion_elegida.set("opcion1")
+#control de los radio buttno del descendente
+primera_pregunta=StringVar()
+primera_pregunta.set(0)
+segunda_pregunta=StringVar()
+segunda_pregunta.set(0)
+tercera_pregunta=StringVar()
+tercera_pregunta.set(0)
+cuarta_pregunta=StringVar()
+cuarta_pregunta.set(0)
 
 # ================= FUNCIONES =================
 
@@ -515,9 +524,18 @@ def mostrar_descendente():
             resultado.pack(padx=0,pady=0,fill=None, expand=False)
             panel_opciones=Frame(panel_mostrar_resultado, bg="gray")
             panel_opciones.pack(padx=5,pady=0)
-            radio=Radiobutton(panel_opciones,variable=opcion_elegida, value="SI" , text="SI")
-            radio2=Radiobutton(panel_opciones,variable=opcion_elegida, value="NO" , text="NO")
-            radio3=Radiobutton(panel_opciones,variable=opcion_elegida, value="TALVEZ" , text="TAL VEZ")
+            if i==1:
+                opcion_elegida=primera_pregunta
+            elif i==2:
+                opcion_elegida=segunda_pregunta
+            elif i==3:
+                opcion_elegida=tercera_pregunta
+            elif i==4:
+                opcion_elegida=cuarta_pregunta
+            
+            radio=Radiobutton(panel_opciones,variable=opcion_elegida, value=1 , text="SI")
+            radio2=Radiobutton(panel_opciones,variable=opcion_elegida, value=2 , text="NO")
+            radio3=Radiobutton(panel_opciones,variable=opcion_elegida, value=3 , text="TAL VEZ")
             radio.grid(padx=5, pady=0, row=0,column=0)
             radio2.grid(padx=5, pady=0, row=0,column=1)
             radio3.grid(padx=5, pady=0, row=0,column=2)
@@ -579,6 +597,9 @@ def mostrar_descendente():
     panel_mostrar_resultado=Frame(panel_resultado, bg="white")
     panel_mostrar_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
 
+    boton_salir=Button(panel_verificacion, text="Verificar", command=regresar_menu, bg="#228B22", font=("Arial",12,"bold"))
+    boton_salir.pack(side=BOTTOM ,padx=100, pady=10)
+
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
@@ -616,7 +637,7 @@ def mostrar_panel_principal():
     boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
     boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton4=Button(panel_menu, text="CERRAR APLICACACION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
+    boton4=Button(panel_menu, text="CERRAR APLICACION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
     boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
 # ================ Programa principal ==================
