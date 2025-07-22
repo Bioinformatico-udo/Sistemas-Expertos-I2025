@@ -184,14 +184,12 @@ opcion_elegida.set("opcion1")
 
 # ================= FUNCIONES =================
 
-#GabrielRosas
 def regresar_menu():
    limpiar_panel_principal()
    global indice_pregunta
    indice_pregunta=0
    mostrar_panel_principal()
 
-#GabrielRosas
 def registrar_respuesta():
     global indice_pregunta
     if indice_pregunta==0:# ¿En que ambiente habita?
@@ -321,7 +319,6 @@ def inicializar_valores():
     indice_pregunta=0
     opcion_elegida.set("opcion0")
 
-#GabrielRosas
 def mostrar_resultado():
     limpiar_panel_principal()
     print("Mostrar Resultado")
@@ -355,34 +352,31 @@ def mostrar_resultado():
     #Panel para mostrar los datos del cangrejo
     panel_resultado=Frame(panel,width=600, height=400, bg="white")
     panel_resultado.pack(padx=50,pady=10,fill=BOTH,expand=True)
-    titulo_panel_descripcion=Label(panel_resultado,width=40, text="Informacion", font=("Arial",15,"bold"))
+    titulo_panel_descripcion=Label(panel_resultado,width=100, text="Informacion", font=("Arial",15,"bold"))
     titulo_panel_descripcion.pack()
-    titulo_nombre_especie=Label(panel_resultado,width=40, text="Nombre Especie", font=("Arial",12,"bold"))
-    titulo_nombre_especie.pack(pady=5, expand=False)
+    titulo_nombre_especie=Label(panel_resultado,width=1000, text="Nombre Especie", font=("Arial",12,"bold"))
+    titulo_nombre_especie.pack(expand=False)
     nombre_especie=Label(panel_resultado,width=40, text="", bg="white", font=("Arial",15,"bold"))
     nombre_especie.pack(pady=5, expand=False)
-    titulo_despcripcion_especie=Label(panel_resultado,width=40, text="Description", font=("Arial",12,"bold"))
-    titulo_despcripcion_especie.pack(pady=5, expand=False)
+    titulo_despcripcion_especie=Label(panel_resultado,width=100, text="Description", font=("Arial",12,"bold"))
+    titulo_despcripcion_especie.pack(expand=False)
     panel_descripcion=Frame(panel_resultado)
     panel_descripcion.pack()
-    titulo_representacion=Label(panel_resultado,width=40, text="Representacion visual", font=("Arial",12,"bold"))
-    titulo_representacion.pack(pady=5, expand=False)
+    titulo_representacion=Label(panel_resultado,width=100, text="Representacion visual", font=("Arial",12,"bold"))
+    titulo_representacion.pack(expand=False)
     panel_representacion=Frame(panel_resultado)
     panel_representacion.pack()
     predecir_especie()
 
-#JesusMarichal
 def salir_programa():
     ventana.destroy()
 
-#JesusMarichal
 def mostrar_paginaweb():
     webbrowser.open("https://jesusmarichal.github.io/Landingpage_Crustaceos/")
 
 def mostrar_paginaweb_udone():
     webbrowser.open("https://es.wikipedia.org/wiki/Universidad_de_Oriente_N%C3%BAcleo_de_Nueva_Esparta")
 
-#GabrielRosas
 def limpiar_panel_principal():
     for widget in panel_principal.winfo_children():
         widget.destroy()
@@ -407,7 +401,6 @@ def mostrar_glosario():
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
-#GabrielRosas
 def mostrar_ascendente():
     limpiar_panel_principal()
     print(len(respuesta_vector))
@@ -478,22 +471,22 @@ def mostrar_ascendente():
     panel=Frame(panel_principal,width=800,height=600, bg="#6495ED")
     panel.pack(padx=0,pady=0,fill=BOTH,expand=True)
 
-    titulo=Label(panel, text="Identificacion de Especies", font=("Arial",18,"bold"))
+    titulo=Label(panel, text="Identificacion de Especies", bg="#6495ED",font=("Arial",18,"bold"))
     titulo.pack(padx=0, pady=5)
     preguntas_completas="Pregunta Completadas:",indice_pregunta,"/",max_preguntas,
-    cantidad_preguntas=Label(panel, text=preguntas_completas, font=("Arial",12,"bold"))
+    cantidad_preguntas=Label(panel, text=preguntas_completas, bg="#6495ED",font=("Arial",12,"bold"))
     cantidad_preguntas.pack(padx=0, pady=5)
 
     panel_preguntas=Frame(panel, bg="#E6E6FA",width=600,height=400)
-    panel_preguntas.pack(padx=10, pady=5,fill=BOTH,expand=True)
+    panel_preguntas.pack(padx=10, pady=0,fill=BOTH,expand=True)
     titulo_preguntas=Label(panel_preguntas,text="", font=("Arial",12,"bold"))
     titulo_preguntas.pack()
 
-    panel_respuestas=Frame(panel_preguntas, bg="#FFE4C4", width=300,height=300)
+    panel_respuestas=Frame(panel_preguntas, bg="#B0C4DE", width=300,height=300)
     panel_respuestas.pack(side=TOP,fill=BOTH, expand=True)
     mostrar_pregunta_respuestas()
 
-    panel_botones=Frame(panel_preguntas, bg="#FFE4C4", width=600,height=50)
+    panel_botones=Frame(panel_preguntas, bg="#B0C4DE", width=600,height=50)
     panel_botones.pack(side=BOTTOM, padx=0, pady=0, fill=X, expand=False)
     boton_anterior=Button(panel_botones, text="Anterior", command=pregunta_anterior, bg="#F0E68C", font=("Arial",12,"bold"))
     boton_anterior.pack(padx=50, pady=2, side=LEFT,fill=BOTH,expand=True)
@@ -503,7 +496,6 @@ def mostrar_ascendente():
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
-#GabrielRosas
 def mostrar_descendente():
 
     def limpiar_panel_mostrar_resultado():
@@ -582,7 +574,7 @@ def mostrar_descendente():
 
     panel_resultado=Frame(panel_verificacion, bg="white",width=600,height=300)
     panel_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
-    titulo_resultado=Label(panel_resultado,text="Resultados de la especie identificada:", font=("Arial",12,"bold"))
+    titulo_resultado=Label(panel_resultado,text="Resultados de la especie identificada:", width=100, font=("Arial",12,"bold"))
     titulo_resultado.pack(padx=0, pady=5, fill=NONE,expand=False)
     panel_mostrar_resultado=Frame(panel_resultado, bg="white")
     panel_mostrar_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
@@ -590,7 +582,6 @@ def mostrar_descendente():
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
 
-#GabrielRosas
 def mostrar_panel_principal():
     panel_menu=Frame(panel_principal,width=200,height=600, bg="#B0C4DE")
     panel_menu.pack(side=LEFT,fill=Y, expand=True)
@@ -625,15 +616,10 @@ def mostrar_panel_principal():
     boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
     boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton4=Button(panel_menu, text="CERRAR APLICACAION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
+    boton4=Button(panel_menu, text="CERRAR APLICACACION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
     boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
 # ================ Programa principal ==================
 
 mostrar_panel_principal()
-
-'''
-for termino, definicion in glosario.items():
-    print(f"**{termino}**: {definicion} \n"+ "-"*50)
-'''
 ventana.mainloop()
