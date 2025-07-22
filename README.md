@@ -111,3 +111,4 @@ Resolver conflictos de merge con precaución y en equipo.
 Si hay dudas o problemas con el repositorio, contactar con el administrador del proyecto.
 
 # ¡Gracias por colaborar y dar lo mejor de ti en este proyecto! 😊
+
