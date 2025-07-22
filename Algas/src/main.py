@@ -307,21 +307,17 @@ class IdentificarAlgaFrame(ttk.Frame):
         # Intentar mostrar imagen si está disponible
         try:
             # En un entorno real, aquí cargarías la imagen desde un archivo
-            # image = Image.open(f"{species.lower().replace(' ', '_')}.png")
-            # image = image.resize((150, 150), Image.LANCZOS)
+            image = Image.open(f"./assets/img/{species.lower().replace(' ', '_')}.png")
+            image = image.resize((250, 250), Image.LANCZOS)
+            self.photo = ImageTk.PhotoImage(image)
             
-            # Para este ejemplo, crearemos una imagen de muestra
-            from tkinter import Canvas
-            img_canvas = Canvas(self.image_frame, width=150, height=150, bg='white', highlightthickness=0)
-            img_canvas.create_text(75, 75, text="Imagen de muestra", fill='#00796b', font=('Arial', 10))
-            img_canvas.pack(pady=10)
-            self.photo = img_canvas  # Mantener referencia
+            # Crear etiqueta para la imagen
+            self.image_label = tk.Label(self.image_frame, image=self.photo, bg='#e0f7fa')
+            self.image_label.pack(pady=10)
             
             # Añadir nombre científico
-            name_label = tk.Label(self.image_frame, text=species, 
-                                font=('Arial', 10, 'italic'), 
-                                bg='#f0f8ff', fg='#00796b')
-            name_label.pack()
+            self.name_label = tk.Label(self.image_frame, text=species, font=('Arial', 10, 'italic'), bg='#e0f7fa')
+            self.name_label.pack()
         except Exception as e:
             print(f"No se pudo cargar la imagen: {e}")
     
