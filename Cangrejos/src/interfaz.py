@@ -109,56 +109,56 @@ lista_cangrejos={
         "property2":"* Región frontal tridentada (lóbulo medio triangular, al menos 2 veces más ancho que los laterales)",
         "property3":"* Artejo basal de la anténula con cresta transversal aserrada en la superficie expuesta",
         "property4":"* Tercer maxilípedo con surco longitudinal submarginal en el isquio",
-        "imagen": resource_path("/assets/images/tridentatus.png")
+        "imagen": resource_path("assets/images/tridentatus.png")
     },
     "Petrolisthes_Tonsorius":{
         "property1":"* Caparazón subcuadrado (tan largo como ancho) casi liso, con pliegues cortos en la región posterolateral",
         "property2":"* Región frontal con surco medio profundo que se extiende hasta los lóbulos protogástricos",
         "property3":"* Flagelo de las antenas más largo que el caparazón, con setas escasas proximalmente",
         "property4":"* Carpo de los quelípedos con gránulos diagonales en el margen extensor",
-        "imagen": resource_path("/assets/images/tonsorius.png")
+        "imagen": resource_path("assets/images/tonsorius.png")
     },
     "Petrolisthes_Jugosus":{
         "property1":"* Caparazón subcircular (más ancho que largo en hembras, más largo en machos)",
         "property2":"* Telson con 5 placas (vs. 7 en otras especies)",
         "property3":"* Región frontal trilobulada con surco medio profundo",
         "property4":"* Carpo de los quelípedos con margen extensor aserrado (gránulos en forma de espínulas)",
-        "imagen": resource_path("/assets/images/jugosus.png")
+        "imagen": resource_path("assets/images/jugosus.png")
     },
     "Petrolisthes_Puelitus":{
         "property1":"* Caparazón subcircular con gránulos pequeños y surcos transversales",
         "property2":"* Flagelo de las antenas desarmado (sin setas) y más largo que el caparazón",
         "property3":"* Propodio de las patas caminadoras con 4 espinas móviles en el margen flexor (vs. 5 en otras especies)",
         "property4":"* Tercer maxilípedo con surco longitudinal en el isquio y 4 surcos en el carpo",
-        "imagen": resource_path("/assets/images/puelitus.png")
+        "imagen": resource_path("assets/images/puelitus.png")
     },
     "Petrolisthes_Magdalenensis":{
         "property1":"* Caparazón subcuadrado con superficie irregular y pliegues dorsolaterales",
         "property2":"* Carpo de los quelípedos con 2–4 dientes triangulares en el margen flexor",
         "property3":"* Primer par de patas caminadoras con 5 espinas en el propodio; otros pares con 4",
         "property4":"* Región frontal ligeramente pubescente (setas aisladas)",
-        "imagen": resource_path("/assets/images/lewisi.png")
+        "imagen": resource_path("assets/images/lewisi.png")
     },
     "Petrolisthes_Armatus":{
         "property1":"* Caparazón ligeramente más largo que ancho, con pliegues posterolaterales",
         "property2":"* Espina epibranquial presente (ausente en otras especies)",
         "property3":"* Carpo de los quelípedos con 3 dientes en el margen flexor y gránulos en el extensor",
         "property4":"* Mero de las patas caminadoras con 2–6 espinas en el margen extensor (vs. 0–4 en otras)",
-        "imagen": resource_path("/assets/images/armatus.png")
+        "imagen": resource_path("assets/images/armatus.png")
     },
     "Petrolisthes_Gallatinus":{
         "property1":"* Caparazón más largo que ancho, con pliegues transversales setosos",
         "property2":"* Región frontal con depresión media en la superficie dorsal",
         "property3":"* Espina supraorbital presente (ausente en otras especies)",
         "property4":"* Mero de los quelípedos con estrías transversales setosas",
-        "imagen": resource_path("/assets/images/gallatinus.png")
+        "imagen": resource_path("assets/images/gallatinus.png")
     },
     "Petrolisthes_Marginatus":{
         "property1":"* Caparazón casi liso (sin gránulos pronunciados), con surcos poco profundos",
         "property2":"* Espina exorbital presente (formando un ángulo orbital externo aserrado)",
         "property3":"* Carpo de los quelípedos con tubérculos espiniformes en el margen extensor",
         "property4":"* Tercer maxilípedo con estrías y gránulos en isquio, mero, carpo y propodio",
-        "imagen": resource_path("/assets/images/marginatus.png")
+        "imagen": resource_path("assets/images/marginatus.png")
     },
 }
 
