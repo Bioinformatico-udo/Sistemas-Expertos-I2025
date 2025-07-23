@@ -182,13 +182,13 @@ panel_principal.pack(fill=BOTH, expand=True)
 opcion_elegida=StringVar()
 opcion_elegida.set("opcion1")
 #control de los radio buttno del descendente
-primera_pregunta=StringVar()
+primera_pregunta=IntVar()
 primera_pregunta.set(0)
-segunda_pregunta=StringVar()
+segunda_pregunta=IntVar()
 segunda_pregunta.set(0)
-tercera_pregunta=StringVar()
+tercera_pregunta=IntVar()
 tercera_pregunta.set(0)
-cuarta_pregunta=StringVar()
+cuarta_pregunta=IntVar()
 cuarta_pregunta.set(0)
 
 # ================= FUNCIONES =================
@@ -508,8 +508,16 @@ def mostrar_ascendente():
 def mostrar_descendente():
 
     def limpiar_panel_mostrar_resultado():
+        inicializar()
         for widget in panel_mostrar_resultado.winfo_children():
             widget.destroy()
+
+    def inicializar():
+        primera_pregunta.set(0)
+        segunda_pregunta.set(0)
+        tercera_pregunta.set(0)
+        cuarta_pregunta.set(0)
+        coincidencia.config(text="")
 
     def mostrar_datos(nombre):
         
@@ -522,7 +530,7 @@ def mostrar_descendente():
             print("NO ESTOY SEGURO")
             resultado=Label(panel_mostrar_resultado,text=lista_cangrejos[nombre][propiedad], bg="white", font=("Arial",10,"bold"))
             resultado.pack(padx=0,pady=0,fill=None, expand=False)
-            panel_opciones=Frame(panel_mostrar_resultado, bg="gray")
+            panel_opciones=Frame(panel_mostrar_resultado, bg="white")
             panel_opciones.pack(padx=5,pady=0)
             if i==1:
                 opcion_elegida=primera_pregunta
@@ -533,9 +541,9 @@ def mostrar_descendente():
             elif i==4:
                 opcion_elegida=cuarta_pregunta
             
-            radio=Radiobutton(panel_opciones,variable=opcion_elegida, value=1 , text="SI")
-            radio2=Radiobutton(panel_opciones,variable=opcion_elegida, value=2 , text="NO")
-            radio3=Radiobutton(panel_opciones,variable=opcion_elegida, value=3 , text="TAL VEZ")
+            radio=Radiobutton(panel_opciones,width=10,height=2, variable=opcion_elegida, relief="solid", borderwidth=1 , value=1 , text="SI")
+            radio2=Radiobutton(panel_opciones,width=10,height=2, variable=opcion_elegida, relief="solid", borderwidth=1 , value=2 , text="NO")
+            radio3=Radiobutton(panel_opciones,width=10,height=2, variable=opcion_elegida, relief="solid", borderwidth=1 , value=3 , text="TAL VEZ")
             radio.grid(padx=5, pady=0, row=0,column=0)
             radio2.grid(padx=5, pady=0, row=0,column=1)
             radio3.grid(padx=5, pady=0, row=0,column=2)
@@ -568,6 +576,44 @@ def mostrar_descendente():
         else:
             messagebox.showwarning("Advertencia","Debe llenar el campo para poder realizar la busqueda")
 
+    def calcular_resultado(primera,segunda,tercera,cuarta):
+        resultado=""
+        concidencia=0
+
+        if primera==1:
+            concidencia+=1
+        if segunda==1:
+            concidencia+=1
+        if tercera==1:
+            concidencia+=1
+        if cuarta==1:
+            concidencia+=1
+
+        return concidencia
+
+    def verificar_especie():
+        if primera_pregunta.get()==0 or segunda_pregunta.get()==0 or tercera_pregunta.get()==0 or cuarta_pregunta.get()==0:
+            messagebox.showwarning("Advertencia", "Debe responder las preguntas para poder realizar la verificacion")
+        else:
+            print(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
+            resultado=calcular_resultado(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
+            if resultado == 4:
+                texto="COINCIDENCIA COMPLETA"
+                coincidencia.config(text=texto, bg="#32CD32", fg="black")
+            elif resultado ==3:
+                texto="POSIBLE COINCIDENCIA"
+                coincidencia.config(text=texto, bg="#FFD700", fg="black")
+            elif resultado ==2:
+                texto="NO SE PUEDE LLEGAR A UNA CONCLUSION"
+                coincidencia.config(text=texto, bg="#FF7F50", fg="black")
+            elif resultado ==1:
+                texto= "NO HAY SUFICIENTES DATOS PARA LLEGAR A UNA CONCLUSION"
+                coincidencia.config(text=texto, bg="#FA8072", fg="black")
+            elif resultado ==0:
+                texto="NO HAY COINCIDENCIA"
+                coincidencia.config(text=texto, bg="#696969", fg="white")
+
+
     print("Panel descendente")
     limpiar_panel_principal()
     panel=Frame(panel_principal,width=800,height=600, bg="#6495ED")
@@ -596,9 +642,10 @@ def mostrar_descendente():
     titulo_resultado.pack(padx=0, pady=5, fill=NONE,expand=False)
     panel_mostrar_resultado=Frame(panel_resultado, bg="white")
     panel_mostrar_resultado.pack(padx=0,pady=0, fill=BOTH, expand=True)
-
-    boton_salir=Button(panel_verificacion, text="Verificar", command=regresar_menu, bg="#228B22", font=("Arial",12,"bold"))
-    boton_salir.pack(side=BOTTOM ,padx=100, pady=10)
+    boton_verficar=Button(panel_verificacion, text="Verificar", command=verificar_especie, bg="#228B22", font=("Arial",12,"bold"))
+    boton_verficar.pack(side=BOTTOM ,padx=100, pady=10)
+    coincidencia=Label(panel_resultado,text="", font=("Arial",15,"bold"))
+    coincidencia.pack(padx=0,pady=0)
 
     boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
     boton_salir.pack(padx=100, pady=10)
