@@ -4,6 +4,133 @@ from PIL import Image, ImageTk
 import webbrowser
 import os
 
+class AlgaExpertSystem:
+    """Clase que encapsula la lógica del sistema experto para identificación de algas"""
+    def __init__(self):
+        self.current_step = 1
+        self.answers = []
+        self.verification_species = None
+    
+    def reset(self):
+        """Reinicia el sistema a su estado inicial"""
+        self.current_step = 1
+        self.answers = []
+        self.verification_species = None
+    
+    def get_question(self):
+        """Devuelve la pregunta actual y opciones"""
+        if self.current_step == 1:
+            return ("1. ¿Cómo es la estructura de la planta?", 
+                    "a) Con rizomas y frondes erectos claramente diferentes",
+                    "b) Aspecto filamentoso; rizomas y frondes erectos de forma similar")
+        
+        elif self.current_step == 2:
+            return ("2. ¿Cómo son los frondes erectos?", 
+                    "a) Planos y en forma de lámina (más de 4mm ancho x 4cm largo, ápices redondeados)",
+                    "b) Divididos en distintos tipos de ramillas")
+        
+        elif self.current_step == 3:
+            return ("3. ¿Cómo son las ramillas?", 
+                    "a) Divididas de manera regular",
+                    "b) Lisas, sin espinas, redondeadas o planas")
+        
+        elif self.current_step == 4:
+            return ("4. ¿Cómo están dispuestas las frondes?", 
+                    "a) No verticiladas",
+                    "b) Verticiladas (hasta 3cm alto, ramillas 0.5-2.0mm)")
+        
+        elif self.current_step == 5:
+            return ("5. ¿Cómo están dispuestas las ramillas?", 
+                    "a) En 2+ filas o radiales, con lóbulos/dientes",
+                    "b) En 1-2 filas")
+        
+        elif self.current_step == 6:
+            return ("6. ¿Cómo son los rizomas y ramillas?", 
+                    "a) Rizomas lisos sin ramillas filamentosas",
+                    "b) Rizomas cubiertos con ramillas filamentosas")
+        
+        elif self.current_step == 7:
+            return ("7. ¿Tienen las ramillas constricción en la base?", 
+                    "a) Sí (nervio central ovalado y comprimido)",
+                    "b) No (nervio central plano, láminas planas)")
+        
+        elif self.current_step == 8:
+            return ("8. ¿Cómo son las ramillas?", 
+                    "a) Diámetro 0.3-0.5mm, ápices nunca engrosados",
+                    "b) Diámetro >0.5mm, ápices ocasionalmente engrosados")
+        
+        elif self.current_step == 9:
+            return ("9. ¿Cómo son las ramillas?", 
+                    "a) Subsésiles, sobre tallos muy cortos; esféricas a bayiformes",
+                    "b) Sobre tallos evidentes; con ápices engrosados o planos")
+        
+        elif self.current_step == 10:
+            return ("10. ¿Cómo son las ramillas esféricas?", 
+                    "a) Constreñidas en la base con pigmentación uniforme",
+                    "b) No constreñidas con pigmentación moteada")
+        
+        return ("Identificación completada", "", "")
+    
+    def answer_question(self, answer):
+        """Procesa una respuesta y avanza en el sistema"""
+        if self.current_step <= 10:
+            self.answers.append((self.current_step, answer))
+            
+            if self.current_step == 1:
+                if answer == 'b':
+                    return "Caulerpa fastigiata"
+                self.current_step = 2
+                
+            elif self.current_step == 2:
+                if answer == 'a':
+                    return "Caulerpa prolifera"
+                self.current_step = 3
+                
+            elif self.current_step == 3:
+                if answer == 'b':
+                    self.current_step = 9
+                else:
+                    self.current_step = 4
+                    
+            elif self.current_step == 4:
+                if answer == 'b':
+                    return "Caulerpa verticillata"
+                self.current_step = 5
+                
+            elif self.current_step == 5:
+                if answer == 'b':
+                    self.current_step = 7
+                else:
+                    self.current_step = 6
+                    
+            elif self.current_step == 6:
+                if answer == 'a':
+                    return "Caulerpa cupressoides"
+                self.current_step = 8
+                
+            elif self.current_step == 7:
+                if answer == 'a':
+                    return "Caulerpa taxifolia"
+                return "Caulerpa mexicana"
+                
+            elif self.current_step == 8:
+                if answer == 'a':
+                    return "Caulerpa sertularioides"
+                return "Caulerpa ashmeadii"
+                
+            elif self.current_step == 9:
+                if answer == 'b':
+                    return "Caulerpa chemnitzia"
+                self.current_step = 10
+                
+            elif self.current_step == 10:
+                if answer == 'a':
+                    return "Caulerpa microphysa"
+                return "Caulerpa macrophysa"
+        
+        return None
+
+
 class MainApplication(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -11,6 +138,9 @@ class MainApplication(tk.Tk):
         self.geometry("800x600")
         self.state("zoomed") # Configurar para pantalla completa
         self.configure(bg='#f0f8ff')
+
+        # Inicializar el sistema experto
+        self.expert_system = AlgaExpertSystem()
 
         self.application_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -81,10 +211,13 @@ class MainApplication(tk.Tk):
     
     def show_identificar_alga(self):
         self.hide_all_frames()
+        self.expert_system.reset()
         self.identificar_alga_frame.pack(fill='both', expand=True)
+        self.identificar_alga_frame.show_question()
     
     def show_verificar_alga(self):
         self.hide_all_frames()
+        self.expert_system.reset()
         self.verificar_alga_frame.pack(fill='both', expand=True)
 
     def show_glosario_terminos(self):
@@ -112,14 +245,9 @@ class IdentificarAlgaFrame(ttk.Frame):
         super().__init__(parent)
         self.configure(style='TFrame')
         self.parent = parent
-        self.current_step = 1
-        self.result_shown = False
-        self.image_label = None
-        self.photo = None
         
         # Crear widgets
         self.create_widgets()
-        self.show_question()
     
     def create_widgets(self):
         # Botón para volver al menú
@@ -163,155 +291,41 @@ class IdentificarAlgaFrame(ttk.Frame):
                                         command=self.restart)
         self.restart_button.pack(pady=20)
         self.restart_button.pack_forget()
+
+        self.show_question()
     
     def show_question(self):
         # Resetear estado
-        self.result_shown = False
         self.restart_button.pack_forget()
         self.clear_image()
         self.option_a.pack(side='left', padx=10)
         self.option_b.pack(side='left', padx=10)
         
-        # Mostrar pregunta según el paso actual
-        if self.current_step == 1:
-            self.show_step1()
-        elif self.current_step == 2:
-            self.show_step2()
-        elif self.current_step == 3:
-            self.show_step3()
-        elif self.current_step == 4:
-            self.show_step4()
-        elif self.current_step == 5:
-            self.show_step5()
-        elif self.current_step == 6:
-            self.show_step6()
-        elif self.current_step == 7:
-            self.show_step7()
-        elif self.current_step == 8:
-            self.show_step8()
-        elif self.current_step == 9:
-            self.show_step9()
-        elif self.current_step == 10:
-            self.show_step10()
-    
-    def show_step1(self):
-        self.question_label.config(text="1. ¿Cómo es la estructura de la planta?")
-        self.option_a.config(text="a) Con rizomas y frondes erectos claramente diferentes")
-        self.option_b.config(text="b) Aspecto filamentoso; rizomas y frondes erectos de forma similar")
-    
-    def show_step2(self):
-        self.question_label.config(text="2. ¿Cómo son los frondes erectos?")
-        self.option_a.config(text="a) Planos y en forma de lámina (más de 4mm ancho x 4cm largo, ápices redondeados)")
-        self.option_b.config(text="b) Divididos en distintos tipos de ramillas")
-    
-    def show_step3(self):
-        self.question_label.config(text="3. ¿Cómo son las ramillas?")
-        self.option_a.config(text="a) Divididas de manera regular")
-        self.option_b.config(text="b) Lisas, sin espinas, redondeadas o planas")
-    
-    def show_step4(self):
-        self.question_label.config(text="4. ¿Cómo están dispuestas las frondes?")
-        self.option_a.config(text="a) No verticiladas")
-        self.option_b.config(text="b) Verticiladas (hasta 3cm alto, ramillas 0.5-2.0mm)")
-    
-    def show_step5(self):
-        self.question_label.config(text="5. ¿Cómo están dispuestas las ramillas?")
-        self.option_a.config(text="a) En 2+ filas o radiales, con lóbulos/dientes")
-        self.option_b.config(text="b) En 1-2 filas")
-    
-    def show_step6(self):
-        self.question_label.config(text="6. ¿Cómo son los rizomas y ramillas?")
-        self.option_a.config(text="a) Rizomas lisos sin ramillas filamentosas")
-        self.option_b.config(text="b) Rizomas cubiertos con ramillas filamentosas")
-    
-    def show_step7(self):
-        self.question_label.config(text="7. ¿Tienen las ramillas constricción en la base?")
-        self.option_a.config(text="a) Sí (nervio central ovalado y comprimido)")
-        self.option_b.config(text="b) No (nervio central plano, láminas planas)")
-    
-    def show_step8(self):
-        self.question_label.config(text="8. ¿Cómo son las ramillas?")
-        self.option_a.config(text="a) Diámetro 0.3-0.5mm, ápices nunca engrosados")
-        self.option_b.config(text="b) Diámetro >0.5mm, ápices ocasionalmente engrosados")
-    
-    def show_step9(self):
-        self.question_label.config(text="9. ¿Cómo son las ramillas?")
-        self.option_a.config(text="a) Subsésiles, sobre tallos muy cortos; esféricas a bayiformes")
-        self.option_b.config(text="b) Sobre tallos evidentes; con ápices engrosados o planos")
-    
-    def show_step10(self):
-        self.question_label.config(text="10. ¿Cómo son las ramillas esféricas?")
-        self.option_a.config(text="a) Constreñidas en la base con pigmentación uniforme")
-        self.option_b.config(text="b) No constreñidas con pigmentación moteada")
-    
-    def select_option(self, option):
-        if self.result_shown:
-            return
-            
-        if self.current_step == 1:
-            if option == 'b':
-                self.show_result("Caulerpa fastigiata")
-            else:
-                self.current_step = 2
-        elif self.current_step == 2:
-            if option == 'a':
-                self.show_result("Caulerpa prolifera")
-            else:
-                self.current_step = 3
-        elif self.current_step == 3:
-            if option == 'b':
-                self.current_step = 9
-            else:
-                self.current_step = 4
-        elif self.current_step == 4:
-            if option == 'b':
-                self.show_result("Caulerpa verticillata")
-            else:
-                self.current_step = 5
-        elif self.current_step == 5:
-            if option == 'b':
-                self.current_step = 7
-            else:
-                self.current_step = 6
-        elif self.current_step == 6:
-            if option == 'a':
-                self.show_result("Caulerpa cupressoides")
-            else:
-                self.current_step = 8
-        elif self.current_step == 7:
-            if option == 'a':
-                self.show_result("Caulerpa taxifolia")
-            else:
-                self.show_result("Caulerpa mexicana")
-        elif self.current_step == 8:
-            if option == 'a':
-                self.show_result("Caulerpa sertularioides")
-            else:
-                self.show_result("Caulerpa ashmeadii")
-        elif self.current_step == 9:
-            if option == 'b':
-                self.show_result("Caulerpa chemnitzia")
-            else:
-                self.current_step = 10
-        elif self.current_step == 10:
-            if option == 'a':
-                self.show_result("Caulerpa microphysa")
-            else:
-                self.show_result("Caulerpa macrophysa")
+        # Obtener pregunta actual
+        question, option_a, option_b = self.parent.expert_system.get_question()
         
-        if not self.result_shown:
-            self.show_question()
+        # Mostrar pregunta
+        self.question_label.config(text=question)
+        self.option_a.config(text=option_a)
+        self.option_b.config(text=option_b)
     
     def clear_image(self):
         """Elimina la imagen actual si existe"""
-        if self.image_label:
+        if hasattr(self, 'image_label'):
             self.image_label.destroy()
-            self.image_label = None
-            self.photo = None
+        if hasattr(self, 'name_label'):
             self.name_label.destroy()
+
+    def select_option(self, option):
+        # Procesar respuesta
+        species = self.parent.expert_system.answer_question(option)
+        
+        if species:
+            self.show_result(species)
+        else:
+            self.show_question()
     
     def show_result(self, species):
-        self.result_shown = True # Bandera para indicar que un resultado ya ha sido mostrado
         self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}")
         self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
@@ -339,15 +353,7 @@ class IdentificarAlgaFrame(ttk.Frame):
             print(f"No se pudo cargar la imagen: {e}")
     
     def restart(self):
-        # Resetear la aplicación al estado inicial
-        self.current_step = 1
-        
-        # Eliminar atributo de resultado
-        if hasattr(self, 'result_shown'):
-            delattr(self, 'result_shown')
-        
-        # Limpiar imagen
-        self.clear_image()
+        self.parent.expert_system.reset()
         
         # Mostrar primera pregunta
         self.show_question()
@@ -358,10 +364,14 @@ class VerificarAlgaFrame(ttk.Frame):
         self.configure(style='TFrame')
         self.parent = parent
         
+        # Crear widgets
+        self.create_widgets()
+    
+    def create_widgets(self):
         # Botón para volver al menú
-        back_button = ttk.Button(self, text="Volver al Menú", 
-                               command=self.parent.show_main_menu)
-        back_button.pack(anchor='nw', padx=10, pady=10)
+        self.back_button = ttk.Button(self, text="Volver al Menú", 
+                                   command=self.parent.show_main_menu)
+        self.back_button.pack(anchor='nw', padx=10, pady=10)
         
         # Título
         title_label = tk.Label(self, text="Verificar Alga", 
@@ -369,50 +379,156 @@ class VerificarAlgaFrame(ttk.Frame):
                              bg='#00796b', fg='white', pady=10)
         title_label.pack(fill='x')
         
-        # Contenido
-        content_frame = ttk.Frame(self)
-        content_frame.pack(fill='both', expand=True, padx=50, pady=30)
+        # Contenido principal
+        self.main_frame = ttk.Frame(self)
+        self.main_frame.pack(fill='both', expand=True, padx=50, pady=30)
         
-        description = ("Esta función permite verificar si una muestra de alga pertenece "
-                      "a una especie específica. Seleccione las características de su alga "
-                      "y el sistema determinará si coincide con alguna especie conocida.\n\n\n\nEn desarrollo...")
-        desc_label = tk.Label(content_frame, text=description, 
+        # Descripción
+        description = ("Seleccione la especie que cree que es su alga y responda las preguntas "
+                      "para verificar si su identificación es correcta.")
+        desc_label = tk.Label(self.main_frame, text=description, 
                             font=('Arial', 11), wraplength=600,
                             justify='left', bg='#f0f8ff')
         desc_label.pack(pady=10)
         
-        # Formulario de características
-        form_frame = ttk.Frame(content_frame)
-        form_frame.pack(pady=20)
+        # Selección de especie
+        species_frame = ttk.Frame(self.main_frame)
+        species_frame.pack(pady=20, fill='x')
         
-        """
-        characteristics = [
-            "Tipo de estructura:",
-            "Forma de los frondes erectos:",
-            "Disposición de las ramillas:",
-            "Presencia de rizomas:",
-            "Tamaño de las ramillas:"
+        species_label = tk.Label(species_frame, text="Seleccione la especie:", 
+                               anchor='w', bg='#f0f8ff')
+        species_label.pack(side='left', padx=5)
+        
+        self.species_var = tk.StringVar()
+        self.species_combobox = ttk.Combobox(species_frame, 
+                                           textvariable=self.species_var,
+                                           width=30)
+        self.species_combobox['values'] = [
+            "Caulerpa fastigiata", "Caulerpa prolifera", "Caulerpa verticillata",
+            "Caulerpa cupressoides", "Caulerpa taxifolia", "Caulerpa mexicana",
+            "Caulerpa sertularioides", "Caulerpa ashmeadii", "Caulerpa chemnitzia",
+            "Caulerpa microphysa", "Caulerpa macrophysa"
         ]
+        self.species_combobox.current(0)
+        self.species_combobox.pack(side='left', padx=5)
         
-
-        for i, char in enumerate(characteristics):
-            lbl = tk.Label(form_frame, text=char, anchor='w', bg='#f0f8ff')
-            lbl.grid(row=i, column=0, padx=5, pady=5, sticky='w')
-            
-            options = ["-- Seleccione --", "Opción 1", "Opción 2", "Opción 3"]
-            cb = ttk.Combobox(form_frame, values=options, width=30)
-            cb.current(0)
-            cb.grid(row=i, column=1, padx=5, pady=5)
-        """
-        # Botón de verificación
-        verify_btn = ttk.Button(content_frame, text="Verificar Alga", 
-                              command=self.verify_alga, width=20)
-        verify_btn.pack(pady=20)
+        # Botón de inicio
+        self.start_button = ttk.Button(self.main_frame, text="Iniciar Verificación", 
+                                     command=self.start_verification, width=20)
+        self.start_button.pack(pady=20)
+        
+        # Frame para el proceso de verificación (inicialmente oculto)
+        self.verification_frame = ttk.Frame(self)
+        
+        # Área de pregunta
+        self.question_label = tk.Label(self.verification_frame, text="", 
+                                     font=('Arial', 12), bg='#f0f8ff',
+                                     wraplength=550, justify='left')
+        self.question_label.pack(pady=20, padx=20)
+        
+        # Frame para botones de opciones
+        self.button_frame = ttk.Frame(self.verification_frame)
+        self.button_frame.pack(pady=20)
+        
+        self.option_a = ttk.Button(self.button_frame, text="", width=30,
+                                  command=lambda: self.answer_question('a'))
+        self.option_a.pack(side='left', padx=10)
+        
+        self.option_b = ttk.Button(self.button_frame, text="", width=30,
+                                  command=lambda: self.answer_question('b'))
+        self.option_b.pack(side='left', padx=10)
+        
+        # Botón para cancelar verificación
+        self.cancel_button = ttk.Button(self.verification_frame, text="Cancelar Verificación",
+                                      command=self.cancel_verification)
+        self.cancel_button.pack(pady=20)
+        
+        # Resultado de verificación
+        self.result_frame = ttk.Frame(self.verification_frame)
+        
+        self.result_label = tk.Label(self.result_frame, text="", 
+                                   font=('Arial', 12), bg='#f0f8ff',
+                                   wraplength=550, justify='left')
+        self.result_label.pack(pady=20)
+        
+        self.suggestion_label = tk.Label(self.result_frame, text="", 
+                                       font=('Arial', 11), bg='#f0f8ff',
+                                       wraplength=550, justify='left', fg='#d32f2f')
+        self.suggestion_label.pack(pady=10)
+        
+        self.restart_button = ttk.Button(self.result_frame, text="Verificar Otra Alga",
+                                       command=self.restart_verification)
+        self.restart_button.pack(pady=20)
     
-    def verify_alga(self):
-        messagebox.showinfo("Verificación", 
-                          "La verificación de algas está en desarrollo.\n"
-                          "Próximamente podrá verificar sus muestras con nuestro sistema.")
+    def start_verification(self):
+        # Obtener especie seleccionada
+        selected_species = self.species_var.get()
+        
+        if selected_species == "":
+            messagebox.showwarning("Selección requerida", "Por favor seleccione una especie")
+            return
+        
+        # Configurar el sistema experto
+        self.parent.expert_system.reset()
+        self.parent.expert_system.verification_species = selected_species
+        
+        # Ocultar el marco principal y mostrar el marco de verificación
+        self.main_frame.pack_forget()
+        self.verification_frame.pack(fill='both', expand=True, padx=50, pady=30)
+        
+        # Mostrar la primera pregunta
+        self.show_question()
+    
+    def show_question(self):
+        # Obtener pregunta actual
+        question, option_a, option_b = self.parent.expert_system.get_question()
+        
+        # Mostrar pregunta
+        self.question_label.config(text=question)
+        self.option_a.config(text=option_a)
+        self.option_b.config(text=option_b)
+        
+        # Ocultar resultado si está visible
+        self.result_frame.pack_forget()
+        self.button_frame.pack(pady=20)
+        self.cancel_button.pack(pady=20)
+    
+    def answer_question(self, option):
+        # Procesar respuesta
+        species = self.parent.expert_system.answer_question(option)
+        
+        if species:
+            self.show_result(species)
+        else:
+            self.show_question()
+    
+    def show_result(self, species):
+        # Ocultar botones de opciones
+        self.button_frame.pack_forget()
+        self.cancel_button.pack_forget()
+        
+        # Mostrar resultado
+        self.result_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        
+        selected_species = self.parent.expert_system.verification_species
+        
+        if species == selected_species:
+            self.result_label.config(text=f"¡Verificación exitosa!\n\nLa especie {species} ha sido confirmada.")
+            self.suggestion_label.config(text="")
+        else:
+            self.result_label.config(text=f"La especie seleccionada ({selected_species}) no coincide con las características.")
+            self.suggestion_label.config(text=f"Basado en las respuestas, la especie parece ser: {species}")
+    
+    def cancel_verification(self):
+        # Volver al marco principal
+        self.verification_frame.pack_forget()
+        self.main_frame.pack(fill='both', expand=True, padx=50, pady=30)
+    
+    def restart_verification(self):
+        # Volver al inicio
+        self.result_frame.pack_forget()
+        self.main_frame.pack(fill='both', expand=True, padx=50, pady=30)
+        self.verification_frame.pack_forget()
 
 class GlosarioTerminosFrame(ttk.Frame):
     def __init__(self, parent):
