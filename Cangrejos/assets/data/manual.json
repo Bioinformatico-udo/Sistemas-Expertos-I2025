@@ -1,0 +1,8 @@
+{
+  "Identificación de una especie": "Esta opción presenta un formulario interactivo con 10 preguntas clave sobre las características de la especie que deseas identificar. Al completar el cuestionario, el programa mostrará: el nombre de la especie más probable, una lista de sus características distintivas y una imagen de referencia para confirmación visual.",
+  "Verificar una especie": "Permite al usuario introducir el nombre de una especie específica para obtener información detallada. El sistema mostrará las características clave de esa especie y ofrecerá opciones de respuesta (Sí/No/Tal vez) para que el usuario pueda contrastar con el espécimen que tiene disponible, facilitando la verificación.",
+  "Glosario de especies": "Contiene un diccionario con términos técnicos y especializados utilizados en el programa, explicados de manera clara y concisa para ayudar a los usuarios a comprender mejor la terminología relacionada con la identificación de especies.",
+  "Acerca de": "Proporciona un enlace externo a la página web oficial del proyecto donde los usuarios pueden encontrar información adicional, documentación extendida, contactar al equipo de desarrollo o acceder a recursos complementarios.",
+  "Manual de uso": "Muestra este documento explicativo que describe el funcionamiento de todas las opciones disponibles en la aplicación (estás aquí ahora mismo).",
+  "Cerrar aplicación": "Finaliza la ejecución del programa de manera segura, cerrando todas las conexiones y procesos internos antes de salir."
+}
