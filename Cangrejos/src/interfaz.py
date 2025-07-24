@@ -28,6 +28,10 @@ ruta_glosario = resource_path("assets/data/glosario.json")
 with open(ruta_glosario,"r",encoding="utf-8") as archivo:
         glosario = json.load(archivo)
 
+ruta_manual = resource_path("assets/data/manual.json")
+with open(ruta_manual,"r",encoding="utf-8") as archivo:
+        manual = json.load(archivo)
+
 #imagenes
 def resource_path(relative_path):
     try:
@@ -393,22 +397,98 @@ def limpiar_panel_principal():
 
 def mostrar_glosario():
     limpiar_panel_principal()
-    panel=Frame(panel_principal,width=800, height=600, bg="#6495ED")
+    panel = Frame(panel_principal, width=800, height=600, bg="#6495ED")
     panel.pack(padx=0, pady=0, fill=BOTH, expand=True)
 
-    titulo=Label(panel, text="Glosario", fon=("Arial",18,"bold"))
+    titulo = Label(panel, text="Glosario", font=("Arial", 18, "bold"))  # Corregí "fon" por "font"
     titulo.pack(padx=0, pady=5)
 
-    panel_glosario=Frame(panel, bg="#E6E6FA",width=600,height=400)
-    panel_glosario.pack(padx=10, pady=5,fill=BOTH,expand=True)
+    # Frame contenedor para Text + Scrollbar
+    panel_contenedor = Frame(panel, bg="#E6E6FA", width=600, height=400)
+    panel_contenedor.pack(padx=10, pady=5, fill=BOTH, expand=True)
 
-    text=Text(panel_glosario, wrap=WORD, font=("Arial",12,""))
-    text.pack(padx=2,pady=2,fill=BOTH, expand=True)
+    # Scrollbar vertical
+    scrollbar = Scrollbar(panel_contenedor)
+    scrollbar.pack(side=RIGHT, fill=Y)
 
+    # Widget Text con scrollbar asociada
+    text = Text(
+        panel_contenedor,
+        wrap=WORD,
+        font=("Arial", 12),
+        yscrollcommand=scrollbar.set,  # Vincula el scroll al texto
+        padx=5,  # Añade padding interno
+        pady=5
+    )
+    text.pack(fill=BOTH, expand=True)
+
+    # Configurar la scrollbar
+    scrollbar.config(command=text.yview)
+
+    # Insertar términos del glosario
     for termino, definicion in glosario.items():
-        text.insert(END, f"*{termino}: {definicion} \n"+ "-"*150+"\n\n")
+        text.insert(END, f"• {termino}:\n", "termino")  # Estilo para término
+        text.insert(END, f"{definicion}\n", "definicion")  # Estilo para definición
+        text.insert(END, "―" *45 + "\n\n")  # Línea divisoria
 
-    boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
+    # Aplicar estilos
+    text.tag_configure("termino", foreground="navy", font=("Arial", 12, "bold"))
+    text.tag_configure("definicion", foreground="black")
+
+    # Deshabilitar edición
+    text.config(state=DISABLED)
+
+    boton_salir = Button(
+        panel,
+        text="Volver al menu",
+        command=regresar_menu,
+        bg="#FF6347",
+        font=("Arial", 12, "bold")
+    )
+    boton_salir.pack(padx=100, pady=10)
+
+def mostrar_manual():
+    limpiar_panel_principal()
+    panel = Frame(panel_principal, width=800, height=600, bg="#6495ED")
+    panel.pack(padx=0, pady=0, fill=BOTH, expand=True)
+
+    titulo = Label(panel, text="Manual de uso", font=("Arial", 18, "bold"))
+    titulo.pack(padx=0, pady=5)
+
+    # Frame contenedor para el Text y Scrollbar
+    panel_contenedor = Frame(panel, bg="#E6E6FA", width=600, height=400)
+    panel_contenedor.pack(padx=10, pady=5, fill=BOTH, expand=True)
+
+    # Scrollbar vertical
+    scrollbar = Scrollbar(panel_contenedor)
+    scrollbar.pack(side=RIGHT, fill=Y)
+
+    # Widget Text con scrollbar asociada
+    text = Text(
+        panel_contenedor,
+        wrap=WORD,
+        font=("Arial", 12),
+        yscrollcommand=scrollbar.set  # Vincula el scroll al texto
+    )
+    text.pack(padx=2, pady=2, fill=BOTH, expand=True)
+
+    # Configurar la scrollbar para controlar el texto
+    scrollbar.config(command=text.yview)
+
+    # Insertar contenido del manual
+    for termino, description in manual.items():
+        text.insert(END, f"• {termino}:\n{description}\n" + "―"*45 + "\n\n")
+
+    # Deshabilitar edición (solo lectura)
+    text.config(state=DISABLED)
+
+    boton_salir = Button(
+        panel,
+        text="Volver al menu",
+        command=regresar_menu,
+        bg="#FF6347",
+        font=("Arial", 12, "bold")
+    )
     boton_salir.pack(padx=100, pady=10)
 
 def mostrar_ascendente():
@@ -669,23 +749,26 @@ def mostrar_panel_principal():
 
     imagen_logo=PhotoImage(file= resource_path("assets/images/Logo_UDO.png"))
     imagen_reduccion_logo=imagen_logo.subsample(18,18)
-    titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF", command=mostrar_paginaweb_udone)
+    titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF",bd=0, command=mostrar_paginaweb_udone)
     titulo_panel.pack(padx=0,pady=0,fill=BOTH, expand=True)
     titulo_panel.image=imagen_reduccion_logo
 
-    boton=Button(panel_menu, text="IDENTIFICAR ESPECIE", bg="#4682B4", bd=0, command=mostrar_ascendente, font=("Arial",12,"bold"))
+    boton=Button(panel_menu, text="Identificar Especie", bg="#4682B4", bd=0, command=mostrar_ascendente, font=("Arial",12,"bold"))
     boton.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=0,command=mostrar_descendente, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="Verificar Especie", bg="#4682B4", bd=0,command=mostrar_descendente, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=0,command=mostrar_glosario, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="Glosario", bg="#4682B4", bd=0,command=mostrar_glosario, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=0,command=mostrar_paginaweb, font=("Arial",12,"bold"))
+    boton3=Button(panel_menu, text="Acerca de", bg="#4682B4", bd=0,command=mostrar_paginaweb, font=("Arial",12,"bold"))
     boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton4=Button(panel_menu, text="CERRAR APLICACION", bg="#FF6347", bd=0,command=salir_programa, font=("Arial",12,"bold"))
+    boton3=Button(panel_menu, text="Manual de uso ", bg="#4682B4", bd=0,command=mostrar_manual, font=("Arial",12,"bold"))
+    boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+    boton4=Button(panel_menu, text="Cerrar Aplicacion", bg="#FF6347", bd=0,command=salir_programa, font=("Arial",12,"bold"))
     boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
 # ================ Programa principal ==================
