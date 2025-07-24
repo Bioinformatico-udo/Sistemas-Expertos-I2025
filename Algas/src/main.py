@@ -134,9 +134,10 @@ class AlgaExpertSystem:
 class MainApplication(tk.Tk):
     def __init__(self):
         super().__init__()
+        # Maximizar la ventana (opción recomendada)
         self.title("Sistema Experto para Algas Marinas")
-        self.geometry("800x600")
-        self.state("zoomed") # Configurar para pantalla completa
+        self.attributes('-zoomed', True)  # Funciona en Windows y algunos Linux
+       #self.state("zoomed") # Configurar para pantalla completa
         self.configure(bg='#f0f8ff')
 
         # Inicializar el sistema experto
