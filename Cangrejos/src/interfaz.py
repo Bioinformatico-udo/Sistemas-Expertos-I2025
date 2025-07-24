@@ -5,7 +5,7 @@ import json
 from tkinter import *
 from tkinter import messagebox
 import webbrowser
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 import sys
 
 # Cargar modelo y clases desde la misma carpeta
@@ -472,8 +472,8 @@ def mostrar_ascendente():
                     print(indice_fila,": ",columna)
                     imagen_respuestas=PhotoImage(file=lista_imagenes[columna])
                     imagen_reduccion_respuesta=imagen_respuestas.subsample(10,10)#10 se muestra mejor
-                    respuesta=Radiobutton(panel_respuestas, width=200, height=300,text=columna, variable=opcion_elegida, value=opcion, image=imagen_reduccion_respuesta, compound="top", relief="solid", borderwidth=1, font=("Arial",10,"bold"))
-                    respuesta.pack(padx=10, pady=50, side=LEFT, fill=BOTH, expand=True)
+                    respuesta=Radiobutton(panel_respuestas, width=20, height=20,text=columna, variable=opcion_elegida, value=opcion, image=imagen_reduccion_respuesta, compound="top", relief="solid", borderwidth=1, font=("Arial",10,"bold"), bg="#E6E6FA")
+                    respuesta.pack(padx=0, pady=0, side=LEFT, fill=BOTH, expand=True)
                     respuesta.image=imagen_reduccion_respuesta
                 indice_fila+=1
             print("-"*30)
@@ -496,7 +496,7 @@ def mostrar_ascendente():
     panel_respuestas.pack(side=TOP,fill=BOTH, expand=True)
     mostrar_pregunta_respuestas()
 
-    panel_botones=Frame(panel_preguntas, bg="#B0C4DE", width=600,height=50)
+    panel_botones=Frame(panel_preguntas, bg="#6495ED", width=600,height=50)
     panel_botones.pack(side=BOTTOM, padx=0, pady=0, fill=X, expand=False)
     boton_anterior=Button(panel_botones, text="Anterior", command=pregunta_anterior, bg="#F0E68C", font=("Arial",12,"bold"))
     boton_anterior.pack(padx=50, pady=2, side=LEFT,fill=BOTH,expand=True)
@@ -599,10 +599,10 @@ def mostrar_descendente():
             print(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
             resultado=calcular_resultado(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
             if resultado == 4:
-                texto="COINCIDENCIA COMPLETA"
+                texto="SI ES LA ESPECIE PROPUESTA"
                 coincidencia.config(text=texto, bg="#32CD32", fg="black")
             elif resultado ==3:
-                texto="POSIBLE COINCIDENCIA"
+                texto="PUEDE QUE SEA LA ESPECIE PROPUESTA"
                 coincidencia.config(text=texto, bg="#FFD700", fg="black")
             elif resultado ==2:
                 texto="NO SE PUEDE LLEGAR A UNA CONCLUSION"
@@ -611,7 +611,7 @@ def mostrar_descendente():
                 texto= "NO HAY SUFICIENTES DATOS PARA LLEGAR A UNA CONCLUSION"
                 coincidencia.config(text=texto, bg="#FA8072", fg="black")
             elif resultado ==0:
-                texto="NO HAY COINCIDENCIA"
+                texto="NO CONCUERDA CON LA ESPECIE"
                 coincidencia.config(text=texto, bg="#696969", fg="white")
 
 
@@ -668,24 +668,24 @@ def mostrar_panel_principal():
     materia_cursada.pack(padx=0,pady=0,side=BOTTOM,fill=NONE,expand=False)
 
     imagen_logo=PhotoImage(file= resource_path("assets/images/Logo_UDO.png"))
-    imagen_reduccion_logo=imagen_logo.subsample(12,12)
+    imagen_reduccion_logo=imagen_logo.subsample(18,18)
     titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF", command=mostrar_paginaweb_udone)
     titulo_panel.pack(padx=0,pady=0,fill=BOTH, expand=True)
     titulo_panel.image=imagen_reduccion_logo
 
-    boton=Button(panel_menu, text="IDENTIFICAR ESPECIE", bg="#4682B4", bd=2, command=mostrar_ascendente, font=("Arial",12,"bold"))
+    boton=Button(panel_menu, text="IDENTIFICAR ESPECIE", bg="#4682B4", bd=0, command=mostrar_ascendente, font=("Arial",12,"bold"))
     boton.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=0,command=mostrar_descendente, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=2,command=mostrar_glosario, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=0,command=mostrar_glosario, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
+    boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=0,command=mostrar_paginaweb, font=("Arial",12,"bold"))
     boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton4=Button(panel_menu, text="CERRAR APLICACION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
+    boton4=Button(panel_menu, text="CERRAR APLICACION", bg="#FF6347", bd=0,command=salir_programa, font=("Arial",12,"bold"))
     boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
 # ================ Programa principal ==================
