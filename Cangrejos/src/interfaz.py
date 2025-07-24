@@ -37,6 +37,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 lista_imagenes = {
+    "Logo": resource_path("assets/images/Logo_UDO.png"),
     "Marino": resource_path("assets/images/agua_salada.png"),
     "Dulceacuicolas": resource_path("assets/images/agua_dulce.png"),
     "Tamaño pequeño (2.0cm a 3.0cm)": resource_path("assets/images/cangrejo_pequeno.png"),
@@ -666,7 +667,7 @@ def mostrar_panel_principal():
     materia_cursada=Label(fondo, text="Sistemas-Expertos-I2025",width=60,font=("Arial",15,"bold"))
     materia_cursada.pack(padx=0,pady=0,side=BOTTOM,fill=NONE,expand=False)
 
-    imagen_logo=PhotoImage(file= resource_path("assets/images/logo_UDO.png"))
+    imagen_logo=PhotoImage(file= resource_path("assets/images/Logo_UDO.png"))
     imagen_reduccion_logo=imagen_logo.subsample(12,12)
     titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF", command=mostrar_paginaweb_udone)
     titulo_panel.pack(padx=0,pady=0,fill=BOTH, expand=True)
