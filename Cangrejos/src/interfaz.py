@@ -598,7 +598,7 @@ def mostrar_descendente():
         segunda_pregunta.set(0)
         tercera_pregunta.set(0)
         cuarta_pregunta.set(0)
-        coincidencia.config(text="")
+        coincidencia.config(text="" ,bg="white")
 
     def mostrar_datos(nombre):
         
