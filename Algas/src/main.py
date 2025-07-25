@@ -571,30 +571,144 @@ class GlosarioTerminosFrame(ttk.Frame):
         back_button.pack(anchor='nw', padx=10, pady=10)
         
         # Título
-        title_label = tk.Label(self, text="Glosario de Terminos", 
+        title_label = tk.Label(self, text="Glosario de Términos", 
                              font=('Arial', 16, 'bold'), 
                              bg='#00796b', fg='white', pady=10)
         title_label.pack(fill='x')
         
-        # Contenido
-        content_frame = ttk.Frame(self)
-        content_frame.pack(fill='both', expand=True, padx=30, pady=20)
+        # Contenedor principal con scroll
+        outer_content_frame = ttk.Frame(self, style='TFrame')
+        outer_content_frame.pack(fill='both', expand=True, padx=30, pady=20)
         
-        # Texto del manual
-        manual_text = """
-        Glosario para el uso del Sistema Experto de Algas Marinas\n\n
+        # Configuración del canvas y scrollbar
+        self.canvas = tk.Canvas(outer_content_frame, bg='#f0f8ff', highlightthickness=0)
+        self.scrollbar = ttk.Scrollbar(outer_content_frame, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas, style='TFrame')
         
-        Términos:\n
-           - Rizomas: Tallos subterráneos o rastreros\n
-           - Frondes erectos: Partes verticales de la planta\n
-           - Ramillas: Pequeñas ramas o divisiones\n
-           - Verticiladas: Disposición en espiral o en círculos
-        """
+        self.canvas_window_id = self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
         
-        manual_label = tk.Label(content_frame, text=manual_text, 
-                              font=('Arial', 11), justify='left',
-                              bg='#f0f8ff', anchor='w')
-        manual_label.pack(fill='both', padx=20, pady=10)
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        
+        # Configurar eventos
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
+        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
+        self.canvas.bind('<Enter>', self._bind_mouse_wheel)
+        self.canvas.bind('<Leave>', self._unbind_mouse_wheel)
+        
+        # Contenido del glosario
+        self.create_glosario_content()
+        self.after(1, self.trigger_initial_scroll_update)
+    
+    def create_glosario_content(self):
+        """Crea y organiza el contenido del glosario"""
+        # Título del glosario
+        title_label = tk.Label(self.scrollable_frame, 
+                             text="Glosario para el uso del Sistema Experto de Algas Marinas",
+                             font=('Arial', 14, 'bold'),
+                             bg='#f0f8ff')
+        title_label.pack(pady=(0, 20))
+        
+        # Términos del glosario
+        terminos = [
+            ("Rizomas", "Tallos subterráneos o rastreros que pueden dar origen a nuevas plantas."),
+            ("Frondes erectos", "Las partes verticales de la planta de alga que se extienden hacia arriba desde el sustrato."),
+            ("Ramillas", "Pequeñas ramas o divisiones secundarias que se desprenden de los frondes principales."),
+            ("Verticiladas", "Una disposición de ramillas o frondes que se organizan en forma de espiral o en círculos alrededor de un eje central."),
+            ("Apices", "Las puntas o extremos de las ramillas o frondes."),
+            ("Constricción basal", "Un estrechamiento o reducción en el diámetro en la base de una estructura."),
+            ("Nervio central", "Una estructura similar a una nervadura que recorre el centro de una lámina o fronde, dándole soporte."),
+            ("Laminar", "Describe una estructura que es plana y delgada, como una hoja."),
+            ("Dicotómica", "Un patrón de ramificación en el que cada división se bifurca en dos ramas aproximadamente iguales."),
+            ("Talo", "El cuerpo vegetativo de un alga, que no está diferenciado en raíz, tallo y hojas verdaderas."),
+            ("Bentónico", "Organismos que viven asociados al fondo de cuerpos de agua."),
+            ("Epífita", "Un organismo que crece sobre otra planta u alga, pero no es parasitario."),
+            ("Uniaxial", "Talo formado por un único eje central de células."),
+            ("Multiaxial", "Talo formado por múltiples ejes celulares que crecen juntos."),
+            ("Vesícula gaseosa (Neumatocisto)", "Estructura llena de gas que ayuda a la flotación del alga."),
+            ("Receptáculo", "Estructura reproductiva que contiene los órganos sexuales."),
+            ("Conceptáculo", "Cavidad en los receptáculos que contiene las estructuras reproductivas."),
+            ("Incrustante", "Que crece pegado y se adhiere fuertemente al sustrato."),
+            ("Calcificado", "Que contiene depósitos de carbonato de calcio, dándole una textura dura o pétrea."),
+            ("Filamentoso", "Que tiene forma de hilo o filamento."),
+            ("Macroscópico", "Visible a simple vista sin necesidad de microscopio."),
+            ("Microscópico", "Requiere un microscopio para ser observado."),
+            ("Hábitat", "El entorno natural en el que vive una especie."),
+            ("Sustrato", "La superficie sobre la cual crece un organismo (rocas, arena, otras algas)."),
+            ("Mareas", "El ascenso y descenso periódico del nivel del mar."),
+            ("Intermareal", "Zona de la costa que queda expuesta al aire durante la marea baja y sumergida durante la marea alta."),
+            ("Submareal", "Zona del fondo marino que siempre está sumergida, incluso durante la marea baja.")
+        ]
+        
+        # Crear un frame para los términos
+        terms_frame = ttk.Frame(self.scrollable_frame, style='TFrame')
+        terms_frame.pack(fill='x', padx=20, pady=10)
+        
+        # Agregar cada término con su definición
+        for termino, definicion in terminos:
+            term_frame = ttk.Frame(terms_frame, style='TFrame')
+            term_frame.pack(fill='x', pady=5, anchor='w')
+            
+            # Término en negrita
+            term_label = tk.Label(term_frame, text=f"{termino}:", 
+                                font=('Arial', 11, 'bold'), 
+                                bg='#f0f8ff', anchor='w')
+            term_label.pack(side='left', anchor='w')
+            
+            # Definición
+            def_label = tk.Label(term_frame, text=definicion,
+                               font=('Arial', 11),
+                               bg='#f0f8ff', anchor='w',
+                               wraplength=600, justify='left')
+            def_label.pack(side='left', padx=(5, 0), fill='x', expand=True)
+            
+            # Configurar el evento para actualizar el wraplength cuando cambie el tamaño
+            def_label.bind('<Configure>', lambda e, lbl=def_label: lbl.config(wraplength=lbl.winfo_width()-5))
+    
+    def trigger_initial_scroll_update(self):
+        """Actualiza el scroll al mostrar el frame"""
+        self.update_idletasks()
+        self._on_frame_configure()
+    
+    def _on_canvas_configure(self, event):
+        """Ajusta el ancho del frame interno cuando cambia el tamaño del canvas"""
+        canvas_width = event.width
+        self.canvas.itemconfig(self.canvas_window_id, width=canvas_width)
+        
+        # Actualizar wraplength para todas las definiciones
+        for child in self.scrollable_frame.winfo_children():
+            if isinstance(child, ttk.Frame):
+                for subchild in child.winfo_children():
+                    if isinstance(subchild, tk.Label) and 'wraplength' in subchild.config():
+                        subchild.config(wraplength=canvas_width - 40)
+    
+    def _on_frame_configure(self, event=None):
+        """Actualiza la región de scroll cuando cambia el contenido"""
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+    
+    def _on_mouse_wheel(self, event):
+        """Maneja el evento de la rueda del mouse para el scroll"""
+        if event.num == 4:
+            self.canvas.yview_scroll(-1, "unit")
+        elif event.num == 5:
+            self.canvas.yview_scroll(1, "unit")
+        else:
+            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    
+    def _bind_mouse_wheel(self, event):
+        """Vincula los eventos de la rueda del mouse cuando el cursor entra al canvas"""
+        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+        self.canvas.bind_all("<Button-4>", self._on_mouse_wheel)
+        self.canvas.bind_all("<Button-5>", self._on_mouse_wheel)
+    
+    def _unbind_mouse_wheel(self, event):
+        """Desvincula los eventos de la rueda del mouse cuando el cursor sale del canvas"""
+        self.canvas.unbind_all("<MouseWheel>")
+        self.canvas.unbind_all("<Button-4>")
+        self.canvas.unbind_all("<Button-5>")
+
+        
 
 class ManualUsuarioFrame(ttk.Frame):
     def __init__(self, parent):
