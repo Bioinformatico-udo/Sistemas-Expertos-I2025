@@ -135,8 +135,7 @@ class MainApplication(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Sistema Experto para Algas Marinas")
-        self.geometry("800x600")
-        self.state("zoomed") # Configurar para pantalla completa
+        self.state('zoomed')
         self.configure(bg='#f0f8ff')
 
         # Inicializar el sistema experto
