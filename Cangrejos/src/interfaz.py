@@ -1,4 +1,5 @@
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Elimina los mensajes oneDNN
 import numpy as np
 import tensorflow as tf
 import json
