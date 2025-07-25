@@ -262,7 +262,7 @@ class IdentificarAlgaFrame(ttk.Frame):
         
         # Área de pregunta
         self.question_frame = ttk.Frame(self)
-        self.question_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        self.question_frame.pack(fill='both', padx=20, pady=20)
         
         self.question_label = tk.Label(self.question_frame, text="", 
                                      font=('Arial', 12), bg='#f0f8ff',
@@ -337,15 +337,14 @@ class IdentificarAlgaFrame(ttk.Frame):
     def select_option(self, option):
         # Procesar respuesta
         species = self.parent.expert_system.answer_question(option)
-        clasificacion = {
-            "Imperio": "Eukaryota",
-            "Reino": "Plantae",
-            "Phylum": "Chlorophyta",
-            "Clase": "Ulvophyceae",
-            "Orden": "Bryopsidales",
-            "Familia": "Caulerpaceae",
-            "Género": "Caulerpa"
-        }
+        clasificacion = """
+        Imperio: Eukaryota
+        Reino: Plantae
+        Phylum: Chlorophyta
+        Clase: Ulvophyceae
+        Orden: Bryopsidales
+        Familia: Caulerpaceae
+        Género: Caulerpa"""
         
         if species:
             self.show_result(species, clasificacion)
@@ -353,10 +352,11 @@ class IdentificarAlgaFrame(ttk.Frame):
             self.show_question()
     
     def show_result(self, species, clasificacion):
-        self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}\n\nClasificación: {clasificacion}")
+        self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}")
+
         self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
-        self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
+        self.restart_button.pack(pady=2) # Mostrar botón de reinicio en la parte inferior
         # Limpiar imagen previa
         self.clear_image()
 
@@ -366,7 +366,7 @@ class IdentificarAlgaFrame(ttk.Frame):
         try:
             # En un entorno real, aquí cargarías la imagen desde un archivo
             image = Image.open(self.icon_path)
-            image = image.resize((250, 250), Image.LANCZOS)
+            image = image.resize((250, 150), Image.LANCZOS)
             self.photo = ImageTk.PhotoImage(image)
             
             # Crear etiqueta para la imagen
@@ -374,10 +374,12 @@ class IdentificarAlgaFrame(ttk.Frame):
             self.image_label.pack(pady=10)
             
             # Añadir nombre científico
-            self.name_label = tk.Label(self.image_frame, text=species, font=('Arial', 10, 'italic'), bg='#e0f7fa')
+            self.name_label = tk.Label(self.image_frame, text=f"{species}\n\nClasificación Taxonómica: {clasificacion}", font=('Arial', 10, 'italic'), bg='#e0f7fa')
             self.name_label.pack()
         except Exception as e:
             print(f"No se pudo cargar la imagen: {e}")
+
+        
     
     def restart(self):
         self.parent.expert_system.reset()
@@ -457,11 +459,11 @@ class VerificarAlgaFrame(ttk.Frame):
         self.button_frame = ttk.Frame(self.verification_frame)
         self.button_frame.pack(pady=20)
         
-        self.option_a = ttk.Button(self.button_frame, text="", width=30,
+        self.option_a = ttk.Button(self.button_frame, text="", width=75,
                                   command=lambda: self.answer_question('a'))
         self.option_a.pack(side='left', padx=10)
         
-        self.option_b = ttk.Button(self.button_frame, text="", width=30,
+        self.option_b = ttk.Button(self.button_frame, text="", width=75,
                                   command=lambda: self.answer_question('b'))
         self.option_b.pack(side='left', padx=10)
         
@@ -751,10 +753,10 @@ class AcercaDeFrame(ttk.Frame):
         self.credits_frame.pack(pady=10)
         
         credits = [
-            "Br. Khristian Flores - Desarrollo de Software",
-            "Br. Duberth Farías - Desarrollo de Software",
-            "Lic. José Morillo - Director de Proyecto",
-            "Lic. Yuraima García - Validación Experta"
+            "Br. Khristian Flores - Desarrollador de Software",
+            "Br. Duberth Farías - Desarrollador de Software",
+            "Lic. José Morillo - Guía del Proyecto",
+            "Lic. Yuraima García - Experta en Algas"
         ]
         
         for credit in credits:
