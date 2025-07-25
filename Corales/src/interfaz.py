@@ -14,7 +14,7 @@ class CoralApp(ctk.CTk):
         self.geometry("1100x800")
         self.resizable(False, False)
 
-        # Cambiar icono de la ventana
+        
         icon_path = os.path.join(os.path.dirname(__file__), "assets", "iconos", "icono.ico")
         if os.path.exists(icon_path):
             self.iconbitmap(icon_path)
