@@ -3,18 +3,16 @@ import customtkinter as ctk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from datetime import datetime
+import subprocess
 from millepora_expert import MilleporaExpert, CoralCharacteristic
-
 
 class CoralApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-
         self.title("Identificación de Corales Millepora del Atlántico")
         self.geometry("1100x800")
         self.resizable(False, False)
 
-        
         icon_path = os.path.join(os.path.dirname(__file__), "assets", "iconos", "icono.ico")
         if os.path.exists(icon_path):
             self.iconbitmap(icon_path)
@@ -28,7 +26,6 @@ class CoralApp(ctk.CTk):
 
     def _setup_ui(self):
         self.configure(bg="#021F3F")
-
         header = ctk.CTkFrame(self, fg_color="transparent")
         header.pack(pady=20)
 
@@ -46,7 +43,6 @@ class CoralApp(ctk.CTk):
 
         self.tabs = ctk.CTkTabview(self, width=1000, height=650)
         self.tabs.pack(pady=10)
-
         self.tabs.add("Inicio")
         self.tabs.add("Identificación")
         self.tabs.add("Resultados")
@@ -79,22 +75,16 @@ class CoralApp(ctk.CTk):
 
         ctk.CTkLabel(
             main_frame,
-            text="Para comenzar, navega a la pestaña 'Identificación' y sigue los pasos.\n\n"
-                 "El sistema te guiará a través de las características observables del coral\n"
-                 "para determinar a qué especie pertenece.",
+            text="Para comenzar, navega a la pestaña 'Identificación' y sigue los pasos.",
             font=ctk.CTkFont(size=16),
             wraplength=600,
-            justify="center").pack(pady=20)
-        
+            justify="center"
+        ).pack(pady=20)
+
     def _setup_identificacion_tab(self):
         tab = self.tabs.tab("Identificación")
-
-        container = ctk.CTkFrame(tab)
-        container.pack(expand=True, fill="both", padx=10, pady=10)
-
-        self.ident_tabs = ctk.CTkTabview(container, width=950, height=500)
+        self.ident_tabs = ctk.CTkTabview(tab, width=950, height=550)
         self.ident_tabs.pack(pady=(20, 10))
-        self.ident_tabs.pack_propagate(False)
 
         self.ident_tabs.add("Forma")
         self.ident_tabs.add("Color")
@@ -133,21 +123,22 @@ class CoralApp(ctk.CTk):
             ("someras", "someras.jpeg", "Aguas someras")
         ], self.detalle_var, "detalles")
 
-        
+        button_container = ctk.CTkFrame(master=tab, fg_color="transparent")
+        button_container.pack(pady=(30, 20))
+
         self.ident_button = ctk.CTkButton(
-            master=container,
+            master=button_container,
             text="🔍 IDENTIFICAR ESPECIE",
             command=self.run_inference,
-            font=ctk.CTkFont(size=20, weight="bold"),
-            height=120,
+            font=ctk.CTkFont(size=32, weight="bold"),
+            height=80,
             width=400,
             fg_color="#0077cc",
             hover_color="#005f99",
             text_color="white",
             corner_radius=10
         )
-        self.ident_button.pack(pady=(30, 10))
-
+        self.ident_button.pack()
 
     def _setup_radio_tab(self, tab, items, variable, folder):
         ctk.CTkLabel(tab, text="Seleccione una opción:", font=ctk.CTkFont(size=18, weight="bold")).pack(pady=10)
@@ -183,7 +174,6 @@ class CoralApp(ctk.CTk):
 
         try:
             self.expert.run()
-
             result = self.expert.get_result_info()
             if result:
                 resumen = self.expert.get_diagnosis_summary()
@@ -210,7 +200,6 @@ class CoralApp(ctk.CTk):
     def update_resultados_tab(self, species, confianza, descripcion, resumen, img_path):
         for widget in self.resultado_frame.winfo_children():
             widget.destroy()
-
         if img_path and os.path.exists(img_path):
             img = Image.open(img_path).resize((300, 200))
             self.result_img = ImageTk.PhotoImage(img)
@@ -255,17 +244,26 @@ class CoralApp(ctk.CTk):
             justify="center"
         ).pack(pady=20)
 
+        # 📘 BOTÓN PARA ABRIR EL MANUAL DE USUARIO
+        manual_btn = ctk.CTkButton(
+            main_frame,
+            text="📘 Ver Manual de Usuario",
+            command=self.abrir_manual_pdf,
+            font=ctk.CTkFont(size=16, weight="bold"),
+            fg_color="#4A90E2",
+            hover_color="#2F6DB5",
+            text_color="white"
+        )
+        manual_btn.pack(pady=20)
+
         autores_texto = (
             "Autores:\n"
-            "• Aaron Ortiz– Estudiante de Informatica\n"
-            "• Fabian Quijada– Estudiante de Informatica\n"
-            "• Eduardo Gonzales – Estudiante de Informatica\n\n"
+            "• Aaron Ortiz– Estudiante de Informática\n"
+            "• Fabian Quijada– Estudiante de Informática\n"
+            "• Eduardo Gonzales – Estudiante de Informática\n\n"
             "Colaboradores Expertos:\n"
             "• Dr. Martin Rada– Especialista en Coralología\n"
-            "• Jose Morillo – Investigador Marino y Licenciado en Informatica\n\n"
-            "Agradecimientos:\n"
-            "Agradecemos a los docentes, asesores y especialistas que contribuyeron con su conocimiento "
-            "y apoyo para el desarrollo de este proyecto.\n"
+            "• Jose Morillo – Investigador Marino y Licenciado en Informática\n"
         )
 
         ctk.CTkLabel(
@@ -274,29 +272,17 @@ class CoralApp(ctk.CTk):
             font=ctk.CTkFont(size=14),
             wraplength=800,
             justify="left"
-        ).pack(pady=20)
+        ).pack(pady=10)
 
-        imagenes_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        imagenes_frame.pack(pady=10)
-
-        autores = [
-            ("aaron.jpg", "Aaron Ortiz"),
-            ("fabian.jpg", "Fabian Quijada"),
-            ("eduardo.jpg", "Eduardo Gonzales")
-        ]
-
-        self.autores_imgs = []
-
-        for img_file, nombre in autores:
-            path = os.path.join(os.path.dirname(__file__), "assets", "autores", img_file)
-            if os.path.exists(path):
-                img = Image.open(path).resize((100, 100))
-                photo = ImageTk.PhotoImage(img)
-                self.autores_imgs.append(photo)
-                box = ctk.CTkFrame(imagenes_frame)
-                box.pack(side="left", padx=10)
-                ctk.CTkLabel(box, image=photo, text="").pack()
-                ctk.CTkLabel(box, text=nombre, font=ctk.CTkFont(size=12)).pack()
+    def abrir_manual_pdf(self):
+        pdf_path = os.path.join(os.path.dirname(__file__), "manual_usuario.pdf")
+        try:
+            if os.name == 'nt':  # Windows
+                os.startfile(pdf_path)
+            elif os.name == 'posix':  # macOS or Linux
+                subprocess.call(('open' if sys.platform == 'darwin' else 'xdg-open', pdf_path))
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo abrir el manual:\n{e}")
 
 
 if __name__ == "__main__":
