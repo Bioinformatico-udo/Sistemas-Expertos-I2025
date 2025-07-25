@@ -21,12 +21,12 @@ class AlgaExpertSystem:
         """Devuelve la pregunta actual y opciones"""
         if self.current_step == 1:
             return ("1. ¿Cómo es la estructura de la planta?", 
-                    "a) Con rizomas y frondes erectos claramente diferentes",
-                    "b) Aspecto filamentoso; rizomas y frondes erectos de forma similar")
+                    "a) Con rizoides y frondes erectos claramente diferentes",
+                    "b) Con rizoides y frondes erectos de forma similar")
         
         elif self.current_step == 2:
             return ("2. ¿Cómo son los frondes erectos?", 
-                    "a) Planos y en forma de lámina (más de 4mm ancho x 4cm largo, ápices redondeados)",
+                    "a) Planos y en forma de lámina",
                     "b) Divididos en distintos tipos de ramillas")
         
         elif self.current_step == 3:
@@ -37,17 +37,17 @@ class AlgaExpertSystem:
         elif self.current_step == 4:
             return ("4. ¿Cómo están dispuestas las frondes?", 
                     "a) No verticiladas",
-                    "b) Verticiladas (hasta 3cm alto, ramillas 0.5-2.0mm)")
+                    "b) Verticiladas")
         
         elif self.current_step == 5:
             return ("5. ¿Cómo están dispuestas las ramillas?", 
-                    "a) En 2+ filas o radiales, con lóbulos/dientes",
+                    "a) En 2+ filas o radiales",
                     "b) En 1-2 filas")
         
         elif self.current_step == 6:
-            return ("6. ¿Cómo son los rizomas y ramillas?", 
-                    "a) Rizomas lisos sin ramillas filamentosas",
-                    "b) Rizomas cubiertos con ramillas filamentosas")
+            return ("6. ¿Cómo son los rizoides y ramillas?", 
+                    "a) Rizoides lisos sin ramillas filamentosas",
+                    "b) Rizoides cubiertos con ramillas filamentosas")
         
         elif self.current_step == 7:
             return ("7. ¿Tienen las ramillas constricción en la base?", 
@@ -61,8 +61,8 @@ class AlgaExpertSystem:
         
         elif self.current_step == 9:
             return ("9. ¿Cómo son las ramillas?", 
-                    "a) Subsésiles, sobre tallos muy cortos; esféricas a bayiformes",
-                    "b) Sobre tallos evidentes; con ápices engrosados o planos")
+                    "a) Sobre Estolones muy cortos; esféricas a bayiformes",
+                    "b) Sobre Estolones evidentes; con ápices engrosados o planos")
         
         elif self.current_step == 10:
             return ("10. ¿Cómo son las ramillas esféricas?", 
@@ -143,7 +143,7 @@ class MainApplication(tk.Tk):
 
         self.application_path = os.path.dirname(os.path.abspath(__file__))
 
-        self.icon_path = os.path.join(self.application_path, '../ico.png')
+        self.icon_path = os.path.join(self.application_path, '../assets/icon/ico.png')
         try:
             icon_image = Image.open(self.icon_path) 
             self.icon_photo = ImageTk.PhotoImage(icon_image)
@@ -307,6 +307,25 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.question_label.config(text=question)
         self.option_a.config(text=option_a)
         self.option_b.config(text=option_b)
+
+        # Limpiar imagen previa
+        self.clear_image()
+
+        self.image_relative_path = os.path.dirname(os.path.abspath(__file__))
+        self.icon_path = os.path.join(self.image_relative_path, f"../assets/img_q/partes_algas.png")
+        # Intentar mostrar imagen si está disponible
+        try:
+            # En un entorno real, aquí cargarías la imagen desde un archivo
+            image = Image.open(self.icon_path)
+            image = image.resize((600, 300), Image.LANCZOS)
+            self.photo = ImageTk.PhotoImage(image)
+            
+            # Crear etiqueta para la imagen
+            self.image_label = tk.Label(self.image_frame, image=self.photo, bg='#e0f7fa')
+            self.image_label.pack(pady=10)
+            
+        except Exception as e:
+            print(f"No se pudo cargar la imagen: {e}")
     
     def clear_image(self):
         """Elimina la imagen actual si existe"""
@@ -318,14 +337,23 @@ class IdentificarAlgaFrame(ttk.Frame):
     def select_option(self, option):
         # Procesar respuesta
         species = self.parent.expert_system.answer_question(option)
+        clasificacion = {
+            "Imperio": "Eukaryota",
+            "Reino": "Plantae",
+            "Phylum": "Chlorophyta",
+            "Clase": "Ulvophyceae",
+            "Orden": "Bryopsidales",
+            "Familia": "Caulerpaceae",
+            "Género": "Caulerpa"
+        }
         
         if species:
-            self.show_result(species)
+            self.show_result(species, clasificacion)
         else:
             self.show_question()
     
-    def show_result(self, species):
-        self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}")
+    def show_result(self, species, clasificacion):
+        self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}\n\nClasificación: {clasificacion}")
         self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
         self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
@@ -670,7 +698,7 @@ class AcercaDeFrame(ttk.Frame):
         self.canvas.bind('<Leave>', self._unbind_mouse_wheel)
 
         self.relative_logo_path = os.path.dirname(os.path.abspath(__file__))
-        self.logo_path = os.path.join(self.relative_logo_path, '../ico.png')
+        self.logo_path = os.path.join(self.relative_logo_path, '../assets/icon/ico.png')
 
         try:
             original_image = Image.open(self.logo_path)
