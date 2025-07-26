@@ -165,7 +165,7 @@ class MainApplication(tk.Tk):
         # Inicializar las secciones
         self.identificar_alga_frame = IdentificarAlgaFrame(self)
         self.verificar_alga_frame = VerificarAlgaFrame(self)
-        self.glosario_terminos_frame = GlosarioTerminosFrame(self)
+        self.glosario_frame = GlosarioFrame(self)
         self.manual_usuario_frame = ManualUsuarioFrame(self)
         self.acerca_de_frame = AcercaDeFrame(self)
         
@@ -188,7 +188,7 @@ class MainApplication(tk.Tk):
         menu_options = [
             ("Identificar Alga", self.show_identificar_alga),
             ("Verificar Alga", self.show_verificar_alga),
-            ("Glosario de Terminos",self.show_glosario_terminos),
+            ("Glosario de Terminos",self.show_glosario),
             ("Manual de Usuario", self.show_manual_usuario),
             ("Acerca de", self.show_acerca_de)
         ]
@@ -219,9 +219,21 @@ class MainApplication(tk.Tk):
         self.expert_system.reset()
         self.verificar_alga_frame.pack(fill='both', expand=True)
 
-    def show_glosario_terminos(self):
+    def show_glosario(self):
         self.hide_all_frames()
-        self.glosario_terminos_frame.pack(fill='both', expand=True)
+        self.glosario_frame.pack(fill='both', expand=True)
+
+    def show_glosario_externo(self):
+        """Muestra el glosario en una ventana independiente"""
+        # Crear ventana emergente
+        glosario_window = tk.Toplevel(self)
+        glosario_window.title("Glosario de Términos")
+        glosario_window.geometry("600x500")
+        glosario_window.configure(bg='#f0f8ff')
+        
+        # Usar el mismo frame de glosario en modo standalone
+        glosario_frame = GlosarioFrame(glosario_window, standalone=True)
+        glosario_frame.pack(fill='both', expand=True, padx=10, pady=10)
     
     def show_manual_usuario(self):
         self.hide_all_frames()
@@ -234,7 +246,7 @@ class MainApplication(tk.Tk):
     
     def hide_all_frames(self):
         for frame in [self.main_menu_frame, self.identificar_alga_frame, 
-                     self.verificar_alga_frame, self.glosario_terminos_frame, self.manual_usuario_frame, 
+                     self.verificar_alga_frame, self.glosario_frame, self.manual_usuario_frame, 
                      self.acerca_de_frame]:
             frame.pack_forget()
 
@@ -245,14 +257,48 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.configure(style='TFrame')
         self.parent = parent
         
-        # Crear widgets
+        # Crear widgets de identificación
         self.create_widgets()
+        
+        # Crear frame de glosario (inicialmente oculto)
+        self.glosario_frame = GlosarioFrame(self, on_back=self.hide_glosario)
+        self.glosario_frame.pack_forget()  # Ocultar inicialmente
+    
+    def show_glosario(self):
+        """Muestra el frame del glosario y oculta la identificación"""
+        self.question_frame.pack_forget()
+        self.glosario_frame.pack(fill='both', expand=True)
+    
+    def hide_glosario(self):
+        """Oculta el glosario y vuelve a mostrar la identificación"""
+        self.glosario_frame.pack_forget()
+        self.question_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        # Si estábamos en medio de una identificación, restaurar el estado
+        if hasattr(self, 'current_step'):
+            self.show_question()
     
     def create_widgets(self):
-        # Botón para volver al menú
-        self.back_button = ttk.Button(self, text="Volver al Menú", 
+        # Frame para botones de navegación
+        nav_frame = ttk.Frame(self)
+        nav_frame.pack(fill='x')
+        
+        self.back_button = ttk.Button(nav_frame, text="Volver al Menú", 
                                     command=self.parent.show_main_menu)
-        self.back_button.pack(anchor='nw', padx=10, pady=10)
+        self.back_button.pack(side='left', padx=10, pady=10)
+
+        # Botones para glosario
+        button_container = ttk.Frame(nav_frame)
+        button_container.pack(side='right')
+        
+        # Botón para glosario interno
+        self.glosario_internal_btn = ttk.Button(button_container, text="Ver Glosario (interno)", 
+                                              command=self.show_glosario)
+        self.glosario_internal_btn.pack(side='left', padx=5)
+        
+        # Botón para glosario externo (nueva ventana)
+        self.glosario_external_btn = ttk.Button(button_container, text="Abrir Glosario (nueva ventana)", 
+                                              command=self.parent.show_glosario_externo)
+        self.glosario_external_btn.pack(side='left', padx=5)
         
         # Título
         self.title_label = tk.Label(self, text="Identificación de Algas Marinas", 
@@ -262,7 +308,7 @@ class IdentificarAlgaFrame(ttk.Frame):
         
         # Área de pregunta
         self.question_frame = ttk.Frame(self)
-        self.question_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        self.question_frame.pack(fill='both', padx=20, pady=20)
         
         self.question_label = tk.Label(self.question_frame, text="", 
                                      font=('Arial', 12), bg='#f0f8ff',
@@ -337,15 +383,14 @@ class IdentificarAlgaFrame(ttk.Frame):
     def select_option(self, option):
         # Procesar respuesta
         species = self.parent.expert_system.answer_question(option)
-        clasificacion = {
-            "Imperio": "Eukaryota",
-            "Reino": "Plantae",
-            "Phylum": "Chlorophyta",
-            "Clase": "Ulvophyceae",
-            "Orden": "Bryopsidales",
-            "Familia": "Caulerpaceae",
-            "Género": "Caulerpa"
-        }
+        clasificacion = """
+        Imperio: Eukaryota
+        Reino: Plantae
+        Phylum: Chlorophyta
+        Clase: Ulvophyceae
+        Orden: Bryopsidales
+        Familia: Caulerpaceae
+        Género: Caulerpa"""
         
         if species:
             self.show_result(species, clasificacion)
@@ -353,10 +398,11 @@ class IdentificarAlgaFrame(ttk.Frame):
             self.show_question()
     
     def show_result(self, species, clasificacion):
-        self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}\n\nClasificación: {clasificacion}")
+        self.question_label.config(text=f"¡Identificación completada!\n\nEspecie identificada: {species}")
+
         self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
-        self.restart_button.pack(pady=20, side=tk.BOTTOM) # Mostrar botón de reinicio en la parte inferior
+        self.restart_button.pack(pady=2) # Mostrar botón de reinicio en la parte inferior
         # Limpiar imagen previa
         self.clear_image()
 
@@ -366,7 +412,7 @@ class IdentificarAlgaFrame(ttk.Frame):
         try:
             # En un entorno real, aquí cargarías la imagen desde un archivo
             image = Image.open(self.icon_path)
-            image = image.resize((250, 250), Image.LANCZOS)
+            image = image.resize((250, 150), Image.LANCZOS)
             self.photo = ImageTk.PhotoImage(image)
             
             # Crear etiqueta para la imagen
@@ -374,7 +420,7 @@ class IdentificarAlgaFrame(ttk.Frame):
             self.image_label.pack(pady=10)
             
             # Añadir nombre científico
-            self.name_label = tk.Label(self.image_frame, text=species, font=('Arial', 10, 'italic'), bg='#e0f7fa')
+            self.name_label = tk.Label(self.image_frame, text=f"{species}\n\nClasificación Taxonómica: {clasificacion}", font=('Arial', 10, 'italic'), bg='#e0f7fa')
             self.name_label.pack()
         except Exception as e:
             print(f"No se pudo cargar la imagen: {e}")
@@ -457,11 +503,11 @@ class VerificarAlgaFrame(ttk.Frame):
         self.button_frame = ttk.Frame(self.verification_frame)
         self.button_frame.pack(pady=20)
         
-        self.option_a = ttk.Button(self.button_frame, text="", width=30,
+        self.option_a = ttk.Button(self.button_frame, text="", width=75,
                                   command=lambda: self.answer_question('a'))
         self.option_a.pack(side='left', padx=10)
         
-        self.option_b = ttk.Button(self.button_frame, text="", width=30,
+        self.option_b = ttk.Button(self.button_frame, text="", width=75,
                                   command=lambda: self.answer_question('b'))
         self.option_b.pack(side='left', padx=10)
         
@@ -557,16 +603,27 @@ class VerificarAlgaFrame(ttk.Frame):
         self.main_frame.pack(fill='both', expand=True, padx=50, pady=30)
         self.verification_frame.pack_forget()
 
-class GlosarioTerminosFrame(ttk.Frame):
-    def __init__(self, parent):
+class GlosarioFrame(ttk.Frame):
+    def __init__(self, parent, on_back=None, standalone=False):
+        """
+        Inicializa el frame del glosario.
+        
+        Args:
+            parent: contenedor padre
+            on_back: función a llamar al presionar "Volver" (si no es standalone)
+            standalone: si es True, muestra un botón para cerrar la ventana
+        """
         super().__init__(parent)
         self.configure(style='TFrame')
         self.parent = parent
-        
-        # Botón para volver al menú
-        back_button = ttk.Button(self, text="Volver al Menú", 
-                               command=self.parent.show_main_menu)
-        back_button.pack(anchor='nw', padx=10, pady=10)
+        self.on_back = on_back
+        self.standalone = standalone
+
+        if on_back==None and standalone==False:
+            # Botón para volver al menú
+            back_button = ttk.Button(self, text="Volver al Menú", 
+                                command=self.parent.show_main_menu)
+            back_button.pack(anchor='nw', padx=10, pady=10)
         
         # Título
         title_label = tk.Label(self, text="Glosario de Términos", 
@@ -574,139 +631,55 @@ class GlosarioTerminosFrame(ttk.Frame):
                              bg='#00796b', fg='white', pady=10)
         title_label.pack(fill='x')
         
-        # Contenedor principal con scroll
-        outer_content_frame = ttk.Frame(self, style='TFrame')
-        outer_content_frame.pack(fill='both', expand=True, padx=30, pady=20)
-        
-        # Configuración del canvas y scrollbar
-        self.canvas = tk.Canvas(outer_content_frame, bg='#f0f8ff', highlightthickness=0)
-        self.scrollbar = ttk.Scrollbar(outer_content_frame, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = ttk.Frame(self.canvas, style='TFrame')
-        
-        self.canvas_window_id = self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-        
-        self.scrollbar.pack(side="right", fill="y")
-        self.canvas.pack(side="left", fill="both", expand=True)
-        
-        # Configurar eventos
-        self.canvas.bind("<Configure>", self._on_canvas_configure)
-        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
-        self.canvas.bind('<Enter>', self._bind_mouse_wheel)
-        self.canvas.bind('<Leave>', self._unbind_mouse_wheel)
-        
-        # Contenido del glosario
-        self.create_glosario_content()
-        self.after(1, self.trigger_initial_scroll_update)
-    
-    def create_glosario_content(self):
-        """Crea y organiza el contenido del glosario"""
-        # Título del glosario
-        title_label = tk.Label(self.scrollable_frame, 
-                             text="Glosario para el uso del Sistema Experto de Algas Marinas",
-                             font=('Arial', 14, 'bold'),
-                             bg='#f0f8ff')
-        title_label.pack(pady=(0, 20))
+        # Contenido
+        content_frame = ttk.Frame(self)
+        content_frame.pack(fill='both', expand=True, padx=30, pady=20)
         
         # Términos del glosario
-        terminos = [
-            ("Rizomas", "Tallos subterráneos o rastreros que pueden dar origen a nuevas plantas."),
-            ("Frondes erectos", "Las partes verticales de la planta de alga que se extienden hacia arriba desde el sustrato."),
-            ("Ramillas", "Pequeñas ramas o divisiones secundarias que se desprenden de los frondes principales."),
-            ("Verticiladas", "Una disposición de ramillas o frondes que se organizan en forma de espiral o en círculos alrededor de un eje central."),
-            ("Apices", "Las puntas o extremos de las ramillas o frondes."),
-            ("Constricción basal", "Un estrechamiento o reducción en el diámetro en la base de una estructura."),
-            ("Nervio central", "Una estructura similar a una nervadura que recorre el centro de una lámina o fronde, dándole soporte."),
-            ("Laminar", "Describe una estructura que es plana y delgada, como una hoja."),
-            ("Dicotómica", "Un patrón de ramificación en el que cada división se bifurca en dos ramas aproximadamente iguales."),
-            ("Talo", "El cuerpo vegetativo de un alga, que no está diferenciado en raíz, tallo y hojas verdaderas."),
-            ("Bentónico", "Organismos que viven asociados al fondo de cuerpos de agua."),
-            ("Epífita", "Un organismo que crece sobre otra planta u alga, pero no es parasitario."),
-            ("Uniaxial", "Talo formado por un único eje central de células."),
-            ("Multiaxial", "Talo formado por múltiples ejes celulares que crecen juntos."),
-            ("Vesícula gaseosa (Neumatocisto)", "Estructura llena de gas que ayuda a la flotación del alga."),
-            ("Receptáculo", "Estructura reproductiva que contiene los órganos sexuales."),
-            ("Conceptáculo", "Cavidad en los receptáculos que contiene las estructuras reproductivas."),
-            ("Incrustante", "Que crece pegado y se adhiere fuertemente al sustrato."),
-            ("Calcificado", "Que contiene depósitos de carbonato de calcio, dándole una textura dura o pétrea."),
-            ("Filamentoso", "Que tiene forma de hilo o filamento."),
-            ("Macroscópico", "Visible a simple vista sin necesidad de microscopio."),
-            ("Microscópico", "Requiere un microscopio para ser observado."),
-            ("Hábitat", "El entorno natural en el que vive una especie."),
-            ("Sustrato", "La superficie sobre la cual crece un organismo (rocas, arena, otras algas)."),
-            ("Mareas", "El ascenso y descenso periódico del nivel del mar."),
-            ("Intermareal", "Zona de la costa que queda expuesta al aire durante la marea baja y sumergida durante la marea alta."),
-            ("Submareal", "Zona del fondo marino que siempre está sumergida, incluso durante la marea baja.")
-        ]
+        terms = {
+            "Ápices": "Extremos o puntas de las estructuras vegetales.",
+            "Bayiformes": "Con forma de baya o pequeño fruto redondeado.",
+            "Claviformes": "Con forma de clavo o porra.",
+            "Constreñidas": "Que se estrechan en ciertos puntos.",
+            "Estolones":"Conexiones horizontales entre organismos que pueden ser parte del organismo o de su esqueleto",
+            "Filamentosas": "De aspecto delgado y alargado, como hilos.",
+            "Frondes erectos": "Las partes verticales de la planta de alga que se extienden hacia arriba desde el sustrato.",
+            "Láminas": "Partes planas y expandidas de las algas.",
+            "Nervio central": "Eje principal que recorre una estructura.",
+            "Peltados": "Con forma de escudo, unidos por el centro.",
+            "Pigmentación moteada": "Coloración irregular con manchas o puntos.",
+            "Ramillas": "Pequeñas ramas o divisiones secundarias que se desprenden de los frondes principales.",
+            "Rizoides": "Estructura equivalente a la raíz o parte inferior de las plantas que realiza la fijación al sustrato en algunos organismos acuáticos sésiles como las algas",
+            "Sésiles": "Sin tallo, unidos directamente a la superficie.",
+            "Subsésiles": "Que casi carecen de tallo o están directamente unidos al eje principal.",
+            "Verticiladas": "Disposición de las hojas o ramas en espiral o en círculos alrededor de un eje."           
+        }
         
-        # Crear un frame para los términos
-        terms_frame = ttk.Frame(self.scrollable_frame, style='TFrame')
-        terms_frame.pack(fill='x', padx=20, pady=10)
+        # Crear un widget Text para mostrar los términos
+        text_area = tk.Text(content_frame, wrap='word', font=('Arial', 11), height=15, bg='white')
+        text_area.pack(fill='both', expand=True, padx=10, pady=10)
         
-        # Agregar cada término con su definición
-        for termino, definicion in terminos:
-            term_frame = ttk.Frame(terms_frame, style='TFrame')
-            term_frame.pack(fill='x', pady=5, anchor='w')
-            
-            # Término en negrita
-            term_label = tk.Label(term_frame, text=f"{termino}:", 
-                                font=('Arial', 11, 'bold'), 
-                                bg='#f0f8ff', anchor='w')
-            term_label.pack(side='left', anchor='w')
-            
-            # Definición
-            def_label = tk.Label(term_frame, text=definicion,
-                               font=('Arial', 11),
-                               bg='#f0f8ff', anchor='w',
-                               wraplength=600, justify='left')
-            def_label.pack(side='left', padx=(5, 0), fill='x', expand=True)
-            
-            # Configurar el evento para actualizar el wraplength cuando cambie el tamaño
-            def_label.bind('<Configure>', lambda e, lbl=def_label: lbl.config(wraplength=lbl.winfo_width()-5))
-    
-    def trigger_initial_scroll_update(self):
-        """Actualiza el scroll al mostrar el frame"""
-        self.update_idletasks()
-        self._on_frame_configure()
-    
-    def _on_canvas_configure(self, event):
-        """Ajusta el ancho del frame interno cuando cambia el tamaño del canvas"""
-        canvas_width = event.width
-        self.canvas.itemconfig(self.canvas_window_id, width=canvas_width)
+        # Insertar términos
+        for term, definition in terms.items():
+            text_area.insert('end', f"{term}:\n", 'bold')
+            text_area.insert('end', f"{definition}\n\n")
         
-        # Actualizar wraplength para todas las definiciones
-        for child in self.scrollable_frame.winfo_children():
-            if isinstance(child, ttk.Frame):
-                for subchild in child.winfo_children():
-                    if isinstance(subchild, tk.Label) and 'wraplength' in subchild.config():
-                        subchild.config(wraplength=canvas_width - 40)
-    
-    def _on_frame_configure(self, event=None):
-        """Actualiza la región de scroll cuando cambia el contenido"""
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-    
-    def _on_mouse_wheel(self, event):
-        """Maneja el evento de la rueda del mouse para el scroll"""
-        if event.num == 4:
-            self.canvas.yview_scroll(-1, "unit")
-        elif event.num == 5:
-            self.canvas.yview_scroll(1, "unit")
-        else:
-            self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-    
-    def _bind_mouse_wheel(self, event):
-        """Vincula los eventos de la rueda del mouse cuando el cursor entra al canvas"""
-        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
-        self.canvas.bind_all("<Button-4>", self._on_mouse_wheel)
-        self.canvas.bind_all("<Button-5>", self._on_mouse_wheel)
-    
-    def _unbind_mouse_wheel(self, event):
-        """Desvincula los eventos de la rueda del mouse cuando el cursor sale del canvas"""
-        self.canvas.unbind_all("<MouseWheel>")
-        self.canvas.unbind_all("<Button-4>")
-        self.canvas.unbind_all("<Button-5>")
-
+        # Configurar el tag para negrita
+        text_area.tag_configure('bold', font=('Arial', 11, 'bold'))
+        text_area.config(state='disabled')  # Hacerlo de solo lectura
         
+        # Botones
+        button_frame = ttk.Frame(self)
+        button_frame.pack(pady=10)
+        
+        if standalone:
+            # Si es una ventana independiente, mostrar botón para cerrar
+            close_btn = ttk.Button(button_frame, text="Cerrar", command=self.master.destroy)
+            close_btn.pack(side='bottom', pady=5)
+        elif on_back:
+            # Si está embebido y se proporcionó on_back, mostrar botón de volver
+            back_btn = ttk.Button(button_frame, text="Volver", command=on_back)
+            back_btn.pack(side='bottom', pady=5)        
 
 class ManualUsuarioFrame(ttk.Frame):
     def __init__(self, parent):
@@ -852,8 +825,8 @@ class AcercaDeFrame(ttk.Frame):
         
         © 2025 Universidad de Oriente. Todos los derechos reservados.
 
-        Creditos a:
-        """
+        
+        Creditos a:"""
         
         self.info_label = tk.Label(self.scrollable_frame, text=app_info, 
                                  font=('Arial', 11), justify='center',
@@ -867,7 +840,7 @@ class AcercaDeFrame(ttk.Frame):
         credits = [
             "Br. Khristian Flores - Desarrollo de Software",
             "Br. Duberth Farías - Desarrollo de Software",
-            "Lic. José Morillo - Director de Proyecto",
+            "Lic. José Morillo - Gestión de Proyecto",
             "Lic. Yuraima García - Validación Experta"
         ]
         
