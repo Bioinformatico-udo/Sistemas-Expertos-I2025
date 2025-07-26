@@ -4,6 +4,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from datetime import datetime
 import subprocess
+import sys
 from millepora_expert import MilleporaExpert, CoralCharacteristic
 
 class CoralApp(ctk.CTk):
@@ -11,7 +12,7 @@ class CoralApp(ctk.CTk):
         super().__init__()
         self.title("Identificación de Corales Millepora del Atlántico")
         self.geometry("1100x800")
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         icon_path = os.path.join(os.path.dirname(__file__), "assets", "iconos", "icono.ico")
         if os.path.exists(icon_path):
@@ -24,15 +25,17 @@ class CoralApp(ctk.CTk):
         self._setup_ui()
         self.expert = MilleporaExpert()
 
+        self._check_active_tab()
+
     def _setup_ui(self):
         self.configure(bg="#021F3F")
-        header = ctk.CTkFrame(self, fg_color="transparent")
-        header.pack(pady=20)
 
-        base_path = os.path.dirname(__file__)
-        img_path = os.path.join(base_path, "assets", "iconos", "coral_icon.jpg")
-        img = Image.open(img_path).resize((80, 80))
-        self.logo = ImageTk.PhotoImage(img)
+        header = ctk.CTkFrame(self, fg_color="transparent")
+        header.pack(pady=10)
+
+        logo_path = os.path.join(os.path.dirname(__file__), "assets", "iconos", "coral_icon.jpg")
+        logo_img = Image.open(logo_path).resize((80, 80))
+        self.logo = ImageTk.PhotoImage(logo_img)
 
         ctk.CTkLabel(header, image=self.logo, text="", fg_color="transparent").pack(side="left", padx=10)
         ctk.CTkLabel(
@@ -41,7 +44,7 @@ class CoralApp(ctk.CTk):
             font=ctk.CTkFont(size=24, weight="bold")
         ).pack(side="left", padx=10)
 
-        self.tabs = ctk.CTkTabview(self, width=1000, height=650)
+        self.tabs = ctk.CTkTabview(self, width=1000, height=600)
         self.tabs.pack(pady=10)
         self.tabs.add("Inicio")
         self.tabs.add("Identificación")
@@ -55,13 +58,33 @@ class CoralApp(ctk.CTk):
         self._setup_historial_tab()
         self._setup_acerca_tab()
 
+        self.ident_button = ctk.CTkButton(
+            master=self,
+            text="🔍 IDENTIFICAR ESPECIE",
+            command=self.run_inference,
+            font=ctk.CTkFont(size=28, weight="bold"),
+            height=70,
+            width=400,
+            fg_color="#0077cc",
+            hover_color="#005f99",
+            text_color="white",
+            corner_radius=10
+        )
+
+    def _check_active_tab(self):
+        if self.tabs.get() == "Identificación":
+            self.ident_button.pack(pady=15)
+        else:
+            self.ident_button.pack_forget()
+        self.after(500, self._check_active_tab)
+
     def _setup_inicio_tab(self):
         tab = self.tabs.tab("Inicio")
-        main_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        main_frame.pack(expand=True, fill="both", padx=50, pady=50)
+        frame = ctk.CTkFrame(tab, fg_color="transparent")
+        frame.pack(expand=True, fill="both", padx=40, pady=40)
 
         ctk.CTkLabel(
-            main_frame,
+            frame,
             text="Bienvenido al Sistema Experto para Identificación de Corales Millepora",
             font=ctk.CTkFont(size=22, weight="bold"),
             wraplength=700,
@@ -71,11 +94,11 @@ class CoralApp(ctk.CTk):
         img_path = os.path.join(os.path.dirname(__file__), "assets", "iconos", "ejemplo.jpeg")
         img = Image.open(img_path).resize((400, 250))
         self.ejemplo_img = ImageTk.PhotoImage(img)
-        ctk.CTkLabel(main_frame, image=self.ejemplo_img, text="").pack(pady=20)
+        ctk.CTkLabel(frame, image=self.ejemplo_img, text="").pack(pady=20)
 
         ctk.CTkLabel(
-            main_frame,
-            text="Para comenzar, navega a la pestaña 'Identificación' y sigue los pasos.",
+            frame,
+            text="Para comenzar, navega a la pestaña 'Identificación' y selecciona las características del coral.",
             font=ctk.CTkFont(size=16),
             wraplength=600,
             justify="center"
@@ -83,7 +106,7 @@ class CoralApp(ctk.CTk):
 
     def _setup_identificacion_tab(self):
         tab = self.tabs.tab("Identificación")
-        self.ident_tabs = ctk.CTkTabview(tab, width=950, height=550)
+        self.ident_tabs = ctk.CTkTabview(tab, width=950, height=500)
         self.ident_tabs.pack(pady=(20, 10))
 
         self.ident_tabs.add("Forma")
@@ -122,23 +145,6 @@ class CoralApp(ctk.CTk):
             ("protuberancias", "protuberancia.jpg", "Protuberancias"),
             ("someras", "someras.jpeg", "Aguas someras")
         ], self.detalle_var, "detalles")
-
-        button_container = ctk.CTkFrame(master=tab, fg_color="transparent")
-        button_container.pack(pady=(30, 20))
-
-        self.ident_button = ctk.CTkButton(
-            master=button_container,
-            text="🔍 IDENTIFICAR ESPECIE",
-            command=self.run_inference,
-            font=ctk.CTkFont(size=32, weight="bold"),
-            height=80,
-            width=400,
-            fg_color="#0077cc",
-            hover_color="#005f99",
-            text_color="white",
-            corner_radius=10
-        )
-        self.ident_button.pack()
 
     def _setup_radio_tab(self, tab, items, variable, folder):
         ctk.CTkLabel(tab, text="Seleccione una opción:", font=ctk.CTkFont(size=18, weight="bold")).pack(pady=10)
@@ -221,11 +227,11 @@ class CoralApp(ctk.CTk):
 
     def _setup_acerca_tab(self):
         tab = self.tabs.tab("Acerca de")
-        main_frame = ctk.CTkFrame(tab, fg_color="transparent")
-        main_frame.pack(expand=True, fill="both", padx=50, pady=50)
+        frame = ctk.CTkFrame(tab, fg_color="transparent")
+        frame.pack(expand=True, fill="both", padx=50, pady=50)
 
         ctk.CTkLabel(
-            main_frame,
+            frame,
             text="Acerca del Sistema Experto Millepora",
             font=ctk.CTkFont(size=22, weight="bold"),
             wraplength=700,
@@ -233,7 +239,7 @@ class CoralApp(ctk.CTk):
         ).pack(pady=20)
 
         ctk.CTkLabel(
-            main_frame,
+            frame,
             text=(
                 "Este sistema experto identifica especies de corales del género *Millepora* "
                 "presentes en el Atlántico, utilizando características morfológicas y ambientales. "
@@ -244,9 +250,8 @@ class CoralApp(ctk.CTk):
             justify="center"
         ).pack(pady=20)
 
-        # 📘 BOTÓN PARA ABRIR EL MANUAL DE USUARIO
         manual_btn = ctk.CTkButton(
-            main_frame,
+            frame,
             text="📘 Ver Manual de Usuario",
             command=self.abrir_manual_pdf,
             font=ctk.CTkFont(size=16, weight="bold"),
@@ -256,34 +261,26 @@ class CoralApp(ctk.CTk):
         )
         manual_btn.pack(pady=20)
 
-        autores_texto = (
+        autores = (
             "Autores:\n"
-            "• Aaron Ortiz– Estudiante de Informática\n"
-            "• Fabian Quijada– Estudiante de Informática\n"
+            "• Aaron Ortiz – Estudiante de Informática\n"
+            "• Fabian Quijada – Estudiante de Informática\n"
             "• Eduardo Gonzales – Estudiante de Informática\n\n"
             "Colaboradores Expertos:\n"
-            "• Dr. Martin Rada– Especialista en Coralología\n"
+            "• Dr. Martin Rada – Especialista en Coralología\n"
             "• Jose Morillo – Investigador Marino y Licenciado en Informática\n"
         )
-
-        ctk.CTkLabel(
-            main_frame,
-            text=autores_texto,
-            font=ctk.CTkFont(size=14),
-            wraplength=800,
-            justify="left"
-        ).pack(pady=10)
+        ctk.CTkLabel(frame, text=autores, font=ctk.CTkFont(size=14), wraplength=800, justify="left").pack(pady=10)
 
     def abrir_manual_pdf(self):
         pdf_path = os.path.join(os.path.dirname(__file__), "manual_usuario.pdf")
         try:
-            if os.name == 'nt':  # Windows
+            if os.name == 'nt':
                 os.startfile(pdf_path)
-            elif os.name == 'posix':  # macOS or Linux
+            elif os.name == 'posix':
                 subprocess.call(('open' if sys.platform == 'darwin' else 'xdg-open', pdf_path))
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo abrir el manual:\n{e}")
-
 
 if __name__ == "__main__":
     app = CoralApp()
