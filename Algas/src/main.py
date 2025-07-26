@@ -407,7 +407,7 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.clear_image()
 
         self.image_relative_path = os.path.dirname(os.path.abspath(__file__))
-        self.icon_path = os.path.join(self.image_relative_path, f"../assets/img/{species.lower().replace(' ', '_')}.png")
+        self.icon_path = os.path.join(self.image_relative_path, f"../assets/img_r/{species.lower().replace(' ', '_')}.png")
         # Intentar mostrar imagen si está disponible
         try:
             # En un entorno real, aquí cargarías la imagen desde un archivo

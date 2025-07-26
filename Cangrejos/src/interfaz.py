@@ -1,11 +1,12 @@
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Elimina los mensajes oneDNN
 import numpy as np
 import tensorflow as tf
 import json
 from tkinter import *
 from tkinter import messagebox
 import webbrowser
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 import sys
 
 # Cargar modelo y clases desde la misma carpeta
@@ -27,6 +28,10 @@ def resource_path(relative_path):
 ruta_glosario = resource_path("assets/data/glosario.json")
 with open(ruta_glosario,"r",encoding="utf-8") as archivo:
         glosario = json.load(archivo)
+
+ruta_manual = resource_path("assets/data/manual.json")
+with open(ruta_manual,"r",encoding="utf-8") as archivo:
+        manual = json.load(archivo)
 
 #imagenes
 def resource_path(relative_path):
@@ -393,22 +398,98 @@ def limpiar_panel_principal():
 
 def mostrar_glosario():
     limpiar_panel_principal()
-    panel=Frame(panel_principal,width=800, height=600, bg="#6495ED")
+    panel = Frame(panel_principal, width=800, height=600, bg="#6495ED")
     panel.pack(padx=0, pady=0, fill=BOTH, expand=True)
 
-    titulo=Label(panel, text="Glosario", fon=("Arial",18,"bold"))
+    titulo = Label(panel, text="Glosario", font=("Arial", 18, "bold"))  # Corregí "fon" por "font"
     titulo.pack(padx=0, pady=5)
 
-    panel_glosario=Frame(panel, bg="#E6E6FA",width=600,height=400)
-    panel_glosario.pack(padx=10, pady=5,fill=BOTH,expand=True)
+    # Frame contenedor para Text + Scrollbar
+    panel_contenedor = Frame(panel, bg="#E6E6FA", width=600, height=400)
+    panel_contenedor.pack(padx=10, pady=5, fill=BOTH, expand=True)
 
-    text=Text(panel_glosario, wrap=WORD, font=("Arial",12,""))
-    text.pack(padx=2,pady=2,fill=BOTH, expand=True)
+    # Scrollbar vertical
+    scrollbar = Scrollbar(panel_contenedor)
+    scrollbar.pack(side=RIGHT, fill=Y)
 
+    # Widget Text con scrollbar asociada
+    text = Text(
+        panel_contenedor,
+        wrap=WORD,
+        font=("Arial", 12),
+        yscrollcommand=scrollbar.set,  # Vincula el scroll al texto
+        padx=5,  # Añade padding interno
+        pady=5
+    )
+    text.pack(fill=BOTH, expand=True)
+
+    # Configurar la scrollbar
+    scrollbar.config(command=text.yview)
+
+    # Insertar términos del glosario
     for termino, definicion in glosario.items():
-        text.insert(END, f"*{termino}: {definicion} \n"+ "-"*150+"\n\n")
+        text.insert(END, f"• {termino}:\n", "termino")  # Estilo para término
+        text.insert(END, f"{definicion}\n", "definicion")  # Estilo para definición
+        text.insert(END, "―" *45 + "\n\n")  # Línea divisoria
 
-    boton_salir=Button(panel, text="Volver al menu", command=regresar_menu, bg="#FF6347", font=("Arial",12,"bold"))
+    # Aplicar estilos
+    text.tag_configure("termino", foreground="navy", font=("Arial", 12, "bold"))
+    text.tag_configure("definicion", foreground="black")
+
+    # Deshabilitar edición
+    text.config(state=DISABLED)
+
+    boton_salir = Button(
+        panel,
+        text="Volver al menu",
+        command=regresar_menu,
+        bg="#FF6347",
+        font=("Arial", 12, "bold")
+    )
+    boton_salir.pack(padx=100, pady=10)
+
+def mostrar_manual():
+    limpiar_panel_principal()
+    panel = Frame(panel_principal, width=800, height=600, bg="#6495ED")
+    panel.pack(padx=0, pady=0, fill=BOTH, expand=True)
+
+    titulo = Label(panel, text="Manual de uso", font=("Arial", 18, "bold"))
+    titulo.pack(padx=0, pady=5)
+
+    # Frame contenedor para el Text y Scrollbar
+    panel_contenedor = Frame(panel, bg="#E6E6FA", width=600, height=400)
+    panel_contenedor.pack(padx=10, pady=5, fill=BOTH, expand=True)
+
+    # Scrollbar vertical
+    scrollbar = Scrollbar(panel_contenedor)
+    scrollbar.pack(side=RIGHT, fill=Y)
+
+    # Widget Text con scrollbar asociada
+    text = Text(
+        panel_contenedor,
+        wrap=WORD,
+        font=("Arial", 12),
+        yscrollcommand=scrollbar.set  # Vincula el scroll al texto
+    )
+    text.pack(padx=2, pady=2, fill=BOTH, expand=True)
+
+    # Configurar la scrollbar para controlar el texto
+    scrollbar.config(command=text.yview)
+
+    # Insertar contenido del manual
+    for termino, description in manual.items():
+        text.insert(END, f"• {termino}:\n{description}\n" + "―"*45 + "\n\n")
+
+    # Deshabilitar edición (solo lectura)
+    text.config(state=DISABLED)
+
+    boton_salir = Button(
+        panel,
+        text="Volver al menu",
+        command=regresar_menu,
+        bg="#FF6347",
+        font=("Arial", 12, "bold")
+    )
     boton_salir.pack(padx=100, pady=10)
 
 def mostrar_ascendente():
@@ -472,8 +553,8 @@ def mostrar_ascendente():
                     print(indice_fila,": ",columna)
                     imagen_respuestas=PhotoImage(file=lista_imagenes[columna])
                     imagen_reduccion_respuesta=imagen_respuestas.subsample(10,10)#10 se muestra mejor
-                    respuesta=Radiobutton(panel_respuestas, width=200, height=300,text=columna, variable=opcion_elegida, value=opcion, image=imagen_reduccion_respuesta, compound="top", relief="solid", borderwidth=1, font=("Arial",10,"bold"))
-                    respuesta.pack(padx=10, pady=50, side=LEFT, fill=BOTH, expand=True)
+                    respuesta=Radiobutton(panel_respuestas, width=20, height=20,text=columna, variable=opcion_elegida, value=opcion, image=imagen_reduccion_respuesta, compound="top", relief="solid", borderwidth=1, font=("Arial",10,"bold"), bg="#E6E6FA")
+                    respuesta.pack(padx=0, pady=0, side=LEFT, fill=BOTH, expand=True)
                     respuesta.image=imagen_reduccion_respuesta
                 indice_fila+=1
             print("-"*30)
@@ -496,7 +577,7 @@ def mostrar_ascendente():
     panel_respuestas.pack(side=TOP,fill=BOTH, expand=True)
     mostrar_pregunta_respuestas()
 
-    panel_botones=Frame(panel_preguntas, bg="#B0C4DE", width=600,height=50)
+    panel_botones=Frame(panel_preguntas, bg="#6495ED", width=600,height=50)
     panel_botones.pack(side=BOTTOM, padx=0, pady=0, fill=X, expand=False)
     boton_anterior=Button(panel_botones, text="Anterior", command=pregunta_anterior, bg="#F0E68C", font=("Arial",12,"bold"))
     boton_anterior.pack(padx=50, pady=2, side=LEFT,fill=BOTH,expand=True)
@@ -518,7 +599,7 @@ def mostrar_descendente():
         segunda_pregunta.set(0)
         tercera_pregunta.set(0)
         cuarta_pregunta.set(0)
-        coincidencia.config(text="")
+        coincidencia.config(text="" ,bg="white")
 
     def mostrar_datos(nombre):
         
@@ -599,10 +680,10 @@ def mostrar_descendente():
             print(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
             resultado=calcular_resultado(primera_pregunta.get(),segunda_pregunta.get(),tercera_pregunta.get(),cuarta_pregunta.get())
             if resultado == 4:
-                texto="COINCIDENCIA COMPLETA"
+                texto="SI ES LA ESPECIE PROPUESTA"
                 coincidencia.config(text=texto, bg="#32CD32", fg="black")
             elif resultado ==3:
-                texto="POSIBLE COINCIDENCIA"
+                texto="PUEDE QUE SEA LA ESPECIE PROPUESTA"
                 coincidencia.config(text=texto, bg="#FFD700", fg="black")
             elif resultado ==2:
                 texto="NO SE PUEDE LLEGAR A UNA CONCLUSION"
@@ -611,7 +692,7 @@ def mostrar_descendente():
                 texto= "NO HAY SUFICIENTES DATOS PARA LLEGAR A UNA CONCLUSION"
                 coincidencia.config(text=texto, bg="#FA8072", fg="black")
             elif resultado ==0:
-                texto="NO HAY COINCIDENCIA"
+                texto="NO CONCUERDA CON LA ESPECIE"
                 coincidencia.config(text=texto, bg="#696969", fg="white")
 
 
@@ -668,24 +749,27 @@ def mostrar_panel_principal():
     materia_cursada.pack(padx=0,pady=0,side=BOTTOM,fill=NONE,expand=False)
 
     imagen_logo=PhotoImage(file= resource_path("assets/images/Logo_UDO.png"))
-    imagen_reduccion_logo=imagen_logo.subsample(12,12)
-    titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF", command=mostrar_paginaweb_udone)
+    imagen_reduccion_logo=imagen_logo.subsample(18,18)
+    titulo_panel=Button(panel_menu, image=imagen_reduccion_logo,height=20, bg="#E0FFFF",bd=0, command=mostrar_paginaweb_udone)
     titulo_panel.pack(padx=0,pady=0,fill=BOTH, expand=True)
     titulo_panel.image=imagen_reduccion_logo
 
-    boton=Button(panel_menu, text="IDENTIFICAR ESPECIE", bg="#4682B4", bd=2, command=mostrar_ascendente, font=("Arial",12,"bold"))
+    boton=Button(panel_menu, text="Identificar Especie", bg="#4682B4", bd=0, command=mostrar_ascendente, font=("Arial",12,"bold"))
     boton.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="VERIFICAR ESPECIE", bg="#4682B4", bd=2,command=mostrar_descendente, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="Verificar Especie", bg="#4682B4", bd=0,command=mostrar_descendente, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton2=Button(panel_menu, text="GLOSARIO ESPECIE", bg="#4682B4", bd=2,command=mostrar_glosario, font=("Arial",12,"bold"))
+    boton2=Button(panel_menu, text="Glosario", bg="#4682B4", bd=0,command=mostrar_glosario, font=("Arial",12,"bold"))
     boton2.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton3=Button(panel_menu, text="PAGINA WEB", bg="#4682B4", bd=2,command=mostrar_paginaweb, font=("Arial",12,"bold"))
+    boton3=Button(panel_menu, text="Acerca de", bg="#4682B4", bd=0,command=mostrar_paginaweb, font=("Arial",12,"bold"))
     boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
-    boton4=Button(panel_menu, text="CERRAR APLICACION", bg="#FF6347", bd=2,command=salir_programa, font=("Arial",12,"bold"))
+    boton3=Button(panel_menu, text="Manual de uso ", bg="#4682B4", bd=0,command=mostrar_manual, font=("Arial",12,"bold"))
+    boton3.pack(padx=0,pady=0,fill=BOTH, expand=True)
+
+    boton4=Button(panel_menu, text="Cerrar Aplicacion", bg="#FF6347", bd=0,command=salir_programa, font=("Arial",12,"bold"))
     boton4.pack(padx=0,pady=0,fill=BOTH, expand=True)
 
 # ================ Programa principal ==================
