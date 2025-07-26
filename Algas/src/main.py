@@ -403,6 +403,7 @@ class IdentificarAlgaFrame(ttk.Frame):
         self.option_a.pack_forget() # Ocultar botones de opción
         self.option_b.pack_forget()
         self.restart_button.pack(pady=2) # Mostrar botón de reinicio en la parte inferior
+
         # Limpiar imagen previa
         self.clear_image()
 
@@ -523,6 +524,10 @@ class VerificarAlgaFrame(ttk.Frame):
                                    font=('Arial', 12), bg='#f0f8ff',
                                    wraplength=550, justify='left')
         self.result_label.pack(pady=20)
+
+        # Frame para contener la imagen
+        self.image_frame = ttk.Frame(self.result_frame)
+        self.image_frame.pack(fill='x', pady=10)
         
         self.suggestion_label = tk.Label(self.result_frame, text="", 
                                        font=('Arial', 11), bg='#f0f8ff',
@@ -565,6 +570,8 @@ class VerificarAlgaFrame(ttk.Frame):
         self.result_frame.pack_forget()
         self.button_frame.pack(pady=20)
         self.cancel_button.pack(pady=20)
+        # Limpiar imagen previa
+        self.clear_image()
     
     def answer_question(self, option):
         # Procesar respuesta
@@ -588,10 +595,34 @@ class VerificarAlgaFrame(ttk.Frame):
         if species == selected_species:
             self.result_label.config(text=f"¡Verificación exitosa!\n\nLa especie {species} ha sido confirmada.")
             self.suggestion_label.config(text="")
+            # Limpiar imagen previa
+            self.clear_image()
+
+            self.image_relative_path = os.path.dirname(os.path.abspath(__file__))
+            self.icon_path = os.path.join(self.image_relative_path, f"../assets/img_r/{species.lower().replace(' ', '_')}.png")
+            # Intentar mostrar imagen si está disponible
+            try:
+                # En un entorno real, aquí cargarías la imagen desde un archivo
+                image = Image.open(self.icon_path)
+                image = image.resize((250, 150), Image.LANCZOS)
+                self.photo = ImageTk.PhotoImage(image)
+
+                # Crear etiqueta para la imagen
+                self.image_label = tk.Label(self.image_frame, image=self.photo, bg='#e0f7fa')
+                self.image_label.pack(pady=10)
+            except Exception as e:
+                print(f"No se pudo cargar la imagen: {e}")
         else:
             self.result_label.config(text=f"La especie seleccionada ({selected_species}) no coincide con las características.")
             self.suggestion_label.config(text=f"Basado en las respuestas, la especie parece ser: {species}")
     
+    def clear_image(self):
+        """Elimina la imagen actual si existe"""
+        if hasattr(self, 'image_label'):
+            self.image_label.destroy()
+        if hasattr(self, 'name_label'):
+            self.name_label.destroy()
+
     def cancel_verification(self):
         # Volver al marco principal
         self.verification_frame.pack_forget()
