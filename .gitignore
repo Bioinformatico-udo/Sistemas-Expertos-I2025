@@ -1,1 +1,18 @@
-Cangrejos\src\virtual-env\
+# Ignorar entornos virtuales de Python
+.venv/
+venv/
+
+# Ignorar archivos temporales de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de configuración del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de usuario de VS Code
+.vscode/
+
+# Otros archivos innecesarios
+*.log
